@@ -3,6 +3,7 @@ var app = express();
 
 var bodyParse = require("body-parser");
 var cookieParser = require("cookie-parser");
+var fs=require("fs");
 var path = require("path");
 
 var mysql = require("mysql");
