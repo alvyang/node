@@ -1,0 +1,56 @@
+<html>
+    <style>
+        div#test{
+            font-family: 'Tangerine',serif;
+            font-size: 48px;
+        }
+        p#link1{
+            font-family: 'Tangerine',serif;
+        }
+    </style>
+    <script src="/assets/jquery-3.1.1.js"></script>
+</head>
+<body>
+
+<div id="test">
+    <h1>Main Page</h1>
+</div>
+<p>Register & Login</p>
+<form action="test.jsp" method="post">
+    账号 :
+    <input type="text" id="name" />
+    <br/><br/>
+    密码 :
+    <input type="text" id="pwd" />
+    <br/><br/>
+    &nbsp&nbsp&nbsp&nbsp&nbsp
+    <div><a href="/add" id="add">EXTRA</a></div>
+    <input type="button" value="Submit" id="x">
+</form>
+
+</body>
+
+    <script type="text/javascript">
+
+        var after_login=function(data,status){
+            if (status=='success'){
+                alert(data+'--'+status) ;
+            }
+            else alert('login refused') ;
+
+        }
+
+        $(document).ready(function(){
+            $("#x").click(function(){
+                var name    =   $("#name").val() ;
+                var pwd     =   $("#pwd").val() ;
+                $.post('http://127.0.0.1:3000/login',{
+                    name    :   name,
+                    pwd     :   pwd
+                },after_login);
+
+            });
+        });
+    </script>
+
+</html>
