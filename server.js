@@ -26,7 +26,6 @@ app.use(cookieParser());
 app.use(session({secret:'lvyang',cookie:{maxAge: 60000*30 },saveUninitialized:true,resave:true}));
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 //Session拦截控制
 app.all("*",function(req,res,next){
     next();
@@ -38,11 +37,11 @@ fs.readdirSync(routes).forEach(function(fileName) {
     var filePath = routes + fileName;
     var rname=fileName.substr(0,fileName.lastIndexOf("."));
     if(!fs.lstatSync(filePath).isDirectory()) {
-       if(rname==="index"){
+        if(rname==="index"){
            app.use("/",require(filePath));
-       }else{
+        }else{
            app.use("/"+rname,require(filePath));
-       }
+        }
     }
 });
 
