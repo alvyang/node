@@ -22,7 +22,7 @@ Table.prototype.checkTable=function(values){
         var flag=false;
         this.fields.forEach(function(r){
             for(var prop in values){
-                if(r===prop|| r.name===prop){
+                if(r===prop || r.name===prop){
                     flag=true;
                 }
             }
@@ -72,15 +72,15 @@ Table.prototype.insert = function(values, callback) {
     }
     var me=this;
     if (this.clearTable(values)) {
-        if(typeof values["id_"]=='underfined'||values["id_"]==null || values["id_"]===""){
-            values["id_"]=uuid.v1();
+        if(typeof values["id"]=='underfined'||values["id"]==null || values["id"]===""){
+            values["id"]=uuid.v1();
         }
         this.getConnection(function(connection) {
             var query = connection.query("insert into " + me.tablename + " set ?", values, function(err, result) {
                 if (err) {
                     callback(err,null);
                 }else{
-                    callback(null,values["id_"]);//TODO　返回生成ＩＤ
+                    callback(null,values["id"]);//TODO　返回生成ＩＤ
                 }
                 connection.release(); //release
             });
@@ -97,7 +97,7 @@ Table.prototype.get = function(ID, callback) {
     var me=this;
     if (ID != null && ID != "") {
         this.getConnection(function(connection) {
-            var query = connection.query("select * from " + me.tablename + " where id_=?", ID, function(err, result) {
+            var query = connection.query("select * from " + me.tablename + " where id=?", ID, function(err, result) {
                 if (err || result.length<1) {
                     callback(err,result);
                 }else{
@@ -118,7 +118,7 @@ Table.prototype.update = function(values, callback) {
     var me=this;
     if (this.clearTable(values)) {
         this.getConnection(function(connection) {
-            var query = connection.query("update  " + me.tablename + " set ? where id_=" + connection.escape(values.id_), values, function(err, result) {
+            var query = connection.query("update  " + me.tablename + " set ? where id=" + connection.escape(values.id), values, function(err, result) {
                 if (err) {
                     callback(err,result);
                 }else{
@@ -131,8 +131,6 @@ Table.prototype.update = function(values, callback) {
     }
 };
 
-
-
 //delete
 Table.prototype.remove = function(ID, callback) {
     if(!callback){
@@ -141,7 +139,7 @@ Table.prototype.remove = function(ID, callback) {
     var me=this;
     if (ID != null && ID != "") {
         this.getConnection(function(connection) {
-            var query = connection.query("delete  from  " + me.tablename + "  where id_=?", ID, function(err, result) {
+            var query = connection.query("delete  from  " + me.tablename + "  where id=?", ID, function(err, result) {
                 if (err) {
                     callback(err,result);
                 }else{

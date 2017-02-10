@@ -14,7 +14,7 @@ global.Sys =new function(){
     var me=this;
     this.cont={},
     //权限认证
-    this.permissionUrls= []
+    this.permissionUrls= ["/login"]
     //管理员权限
     this.adminUrls=[]
 };
