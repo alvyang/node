@@ -1,20 +1,21 @@
 <template>
-	<div class="login">
-		<div class="login_alert">
-			<el-alert :title="alertMessage" v-show="alertMessage" type="error"></el-alert>
+	<div class="login_page">
+		<div class="login">
+			<div class="login_alert">
+				<el-alert :title="alertMessage" v-show="alertMessage" type="error"></el-alert>
+			</div>
+			<el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" class="demo-ruleForm">
+				<el-form-item label="" prop="username">
+					<el-input type="text" v-model="ruleForm2.username" placeholder="请输入用户名" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="" prop="password">
+					<el-input type="password" v-model="ruleForm2.password" placeholder="请输入密码" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
+				</el-form-item>
+			</el-form>
 		</div>
-		<el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
-			<el-form-item label="用户名" prop="username">
-				<el-input type="text" v-model="ruleForm2.username" auto-complete="off"></el-input>
-			</el-form-item>
-			<el-form-item label="密　码" prop="password">
-				<el-input type="password" v-model="ruleForm2.password" auto-complete="off"></el-input>
-			</el-form-item>
-			<el-form-item>
-				<el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
-				<el-button @click="resetForm('ruleForm2')">重置</el-button>
-			</el-form-item>
-		</el-form>
 	</div>
 </template>
 <script>
@@ -56,6 +57,12 @@
 				}
 			};
 		},
+		mounted(){
+			$(".login_page").height($(window).height());
+			$(window).resize(function(){
+				$(".login_page").height($(window).height());
+			});
+		},
 		methods: {
 			submitForm(formName) {
 				var _self = this;
@@ -81,25 +88,31 @@
 						return false;
 					}
 				});
-			},
-			resetForm(formName) {
-				this.$refs[formName].resetFields();
 			}
 		}
 	})
 </script>
 <style>
+	.login_page{
+		/*background:-webkit-gradient(linear, 0% 0%, 0% 100%,from(#182545), to(#2b759c));*/
+	}
 	.login{
-		background-color: #ffffff;
 		position: absolute;
-		width: 400px;
+		width: 300px;
 		height: 240px;
 		left: 50%;
 		top: 50%;
-		margin-left: -200px;
+		margin-left: -150px;
 		margin-top: -120px;
 	}
 	.login_alert{
 		margin-bottom: 20px;
+		height:30px;
+	}
+	/* 
+	 * 修改element 样式
+	 */
+	.el-button{
+		width: 100%;
 	}
 </style>
