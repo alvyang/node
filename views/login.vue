@@ -6,10 +6,13 @@
 			</div>
 			<el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" class="demo-ruleForm">
 				<el-form-item label="" prop="username">
-					<el-input type="text" v-model="ruleForm2.username" placeholder="请输入用户名" auto-complete="off"></el-input>
+					<el-input type="text" v-model="ruleForm2.username" placeholder="请输入用户名"></el-input>
 				</el-form-item>
 				<el-form-item label="" prop="password">
-					<el-input type="password" v-model="ruleForm2.password" placeholder="请输入密码" auto-complete="off"></el-input>
+					<el-input type="password" v-model="ruleForm2.password" placeholder="请输入密码"></el-input>
+				</el-form-item>
+				<el-form-item label="" prop="code" class="code_input">
+					<el-input type="text" v-model="ruleForm2.code" placeholder="请输入验证码"></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
@@ -39,11 +42,19 @@
 					callback();
 				}
 			};
+			var validatePass3 = (rule, value, callback) => {
+				if(value === '') {
+					callback(new Error('请输入验证码'));
+				}else {
+					callback();
+				}
+			};
 			return {
 				alertMessage:"",
 				ruleForm2: {
 					username: '',
-					password: ''
+					password: '',
+					code:''
 				},
 				rules2: {
 					username: [{
@@ -52,6 +63,10 @@
 					}],
 					password: [{
 						validator: validatePass2,
+						trigger: 'blur'
+					}],
+					code:[{
+						validator: validatePass3,
 						trigger: 'blur'
 					}]
 				}
@@ -112,6 +127,9 @@
 	/* 
 	 * 修改element 样式
 	 */
+	.code_input .el-form-item__content{
+		margin-right: 120px;
+	}
 	.el-button{
 		width: 100%;
 	}

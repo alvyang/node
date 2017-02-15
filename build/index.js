@@ -11241,7 +11241,7 @@
 
 
 	// module
-	exports.push([module.id, "\n.login_page{\n\t/*background:-webkit-gradient(linear, 0% 0%, 0% 100%,from(#182545), to(#2b759c));*/\n}\n.login{\n\tposition: absolute;\n\twidth: 300px;\n\theight: 240px;\n\tleft: 50%;\n\ttop: 50%;\n\tmargin-left: -150px;\n\tmargin-top: -120px;\n}\n.login_alert{\n\tmargin-bottom: 20px;\n\theight:30px;\n}\n/* \n * 修改element 样式\n */\n.el-button{\n\twidth: 100%;\n}\n", ""]);
+	exports.push([module.id, "\n.login_page{\n\t/*background:-webkit-gradient(linear, 0% 0%, 0% 100%,from(#182545), to(#2b759c));*/\n}\n.login{\n\tposition: absolute;\n\twidth: 300px;\n\theight: 240px;\n\tleft: 50%;\n\ttop: 50%;\n\tmargin-left: -150px;\n\tmargin-top: -120px;\n}\n.login_alert{\n\tmargin-bottom: 20px;\n\theight:30px;\n}\n/* \n * 修改element 样式\n */\n.code_input .el-form-item__content{\n\tmargin-right: 120px;\n}\n.el-button{\n\twidth: 100%;\n}\n", ""]);
 
 	// exports
 
@@ -11561,11 +11561,19 @@
 					callback();
 				}
 			};
+			var validatePass3 = function validatePass3(rule, value, callback) {
+				if (value === '') {
+					callback(new Error('请输入验证码'));
+				} else {
+					callback();
+				}
+			};
 			return {
 				alertMessage: "",
 				ruleForm2: {
 					username: '',
-					password: ''
+					password: '',
+					code: ''
 				},
 				rules2: {
 					username: [{
@@ -11574,6 +11582,10 @@
 					}],
 					password: [{
 						validator: validatePass2,
+						trigger: 'blur'
+					}],
+					code: [{
+						validator: validatePass3,
 						trigger: 'blur'
 					}]
 				}
@@ -11614,6 +11626,9 @@
 			}
 		}
 	}; //
+	//
+	//
+	//
 	//
 	//
 	//
@@ -21903,8 +21918,7 @@
 	    }],
 	    attrs: {
 	      "type": "text",
-	      "placeholder": "请输入用户名",
-	      "auto-complete": "off"
+	      "placeholder": "请输入用户名"
 	    },
 	    domProps: {
 	      "value": (_vm.ruleForm2.username)
@@ -21928,8 +21942,7 @@
 	    }],
 	    attrs: {
 	      "type": "password",
-	      "placeholder": "请输入密码",
-	      "auto-complete": "off"
+	      "placeholder": "请输入密码"
 	    },
 	    domProps: {
 	      "value": (_vm.ruleForm2.password)
@@ -21937,6 +21950,31 @@
 	    on: {
 	      "input": function($event) {
 	        _vm.ruleForm2.password = $event
+	      }
+	    }
+	  })], 1), _vm._v(" "), _c('el-form-item', {
+	    staticClass: "code_input",
+	    attrs: {
+	      "label": "",
+	      "prop": "code"
+	    }
+	  }, [_c('el-input', {
+	    directives: [{
+	      name: "model",
+	      rawName: "v-model",
+	      value: (_vm.ruleForm2.code),
+	      expression: "ruleForm2.code"
+	    }],
+	    attrs: {
+	      "type": "text",
+	      "placeholder": "请输入验证码"
+	    },
+	    domProps: {
+	      "value": (_vm.ruleForm2.code)
+	    },
+	    on: {
+	      "input": function($event) {
+	        _vm.ruleForm2.code = $event
 	      }
 	    }
 	  })], 1), _vm._v(" "), _c('el-form-item', [_c('el-button', {
