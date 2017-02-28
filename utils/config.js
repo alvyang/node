@@ -6,7 +6,7 @@ var app = {
     user: 'root',
     password: 'admin',
     database: 'node',
-    logger_path: "server/log/error.log",
+    logger_path: "./log/error.log",
     logger_level: 'debug' //debug | error
 };
 
