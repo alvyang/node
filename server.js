@@ -17,17 +17,24 @@ DB.define({key:'User',name:'user',fields:['id','username','password']});
 
 //Express配置
 var app = express();
-app.set('routes',__dirname + '/server/');
+app.set('routes',__dirname + '/routes/');
 //app.use(morgan('dev'));
 app.use(multiparty());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(session({secret:'lvyang',cookie:{maxAge: 60000*30 },saveUninitialized:true,resave:true}));
-app.use(express.static(path.join(__dirname, 'build')));
 
 //Session拦截控制
 app.all("*",function(req,res,next){
+	
+	//以下代码，解决跨域问题
+	res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+    res.header("X-Powered-By",' 3.2.1');
+    res.header("Content-Type", "application/json;charset=utf-8");
+	
     next();
 });
 
@@ -37,11 +44,7 @@ fs.readdirSync(routes).forEach(function(fileName) {
     var filePath = routes + fileName;
     var rname=fileName.substr(0,fileName.lastIndexOf("."));
     if(!fs.lstatSync(filePath).isDirectory()) {
-        if(rname==="index"){
-           app.use("/",require(filePath));
-        }else{
-           app.use("/"+rname,require(filePath));
-        }
+       app.use("/inter/"+rname,require(filePath));
     }
 });
 
@@ -49,6 +52,7 @@ fs.readdirSync(routes).forEach(function(fileName) {
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
+    res.status(err.status || 500);
 });
 
 ///500

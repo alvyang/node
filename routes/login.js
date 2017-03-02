@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 
 router.post("/login",function(req,res){
+	console.log(".........");
 	var user = DB.get("User");
 	user.where(req.body,null,function(err,result){
 		if(result.length == 0){
@@ -12,4 +13,5 @@ router.post("/login",function(req,res){
 		}
 	});
 });
+
 module.exports = router;
