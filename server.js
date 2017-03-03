@@ -7,17 +7,8 @@ var bodyParser = require('body-parser');
 var multiparty=require("connect-multiparty");
 var session=require("express-session");
 
-global.logger=require("./utils/logger.js");
-global.moment = require('moment');//日期函数全局访问
-global.moment.locale('zh-cn');
-global.DB=require("./utils/dbutil.js").Instance();
-
-///定义实体
-DB.define({key:'User',name:'user',fields:['id','username','password']});
-
 //Express配置
 var app = express();
-app.set('routes',__dirname + '/routes/');
 //app.use(morgan('dev'));
 app.use(multiparty());
 app.use(bodyParser.json());
@@ -25,20 +16,25 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(session({secret:'lvyang',cookie:{maxAge: 60000*30 },saveUninitialized:true,resave:true}));
 
-//Session拦截控制
-app.all("*",function(req,res,next){
-	
-	//以下代码，解决跨域问题
-	res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
-    res.header("X-Powered-By",' 3.2.1');
-    res.header("Content-Type", "application/json;charset=utf-8");
-	
-    next();
-});
+global.logger=require("./utils/logger.js");
+global.moment = require('moment');//日期函数全局访问
+global.moment.locale('zh-cn');
+global.DB=require("./utils/dbutil.js").Instance();
 
+var we = require("./utils/wechat_util.js");
+we.getAccessToken();
+
+///定义实体
+app.set('entity',__dirname + '/entity/');
+var entity=app.get("entity");
+fs.readdirSync(entity).forEach(function(fileName) {
+    var filePath = entity + fileName;
+    if(!fs.lstatSync(filePath).isDirectory()) {
+		DB.define(require(filePath));
+    }
+});
 //控制层_根据routes文件名+方法_约定请求路径
+app.set('routes',__dirname + '/routes/');
 var routes=app.get("routes");
 fs.readdirSync(routes).forEach(function(fileName) {
     var filePath = routes + fileName;
@@ -48,6 +44,16 @@ fs.readdirSync(routes).forEach(function(fileName) {
     }
 });
 
+//Session拦截控制
+app.all("*",function(req,res,next){
+	//以下代码，解决跨域问题
+	res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+    res.header("X-Powered-By",' 3.2.1');
+    res.header("Content-Type", "application/json;charset=utf-8");
+    next();
+});
 ///404
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
