@@ -1,12 +1,8 @@
 var express = require("express");
 var router = express.Router();
-var redis = require("../utils/redis_util.js");
 
-router.post("/login",function(req,res){
-	var user = DB.get("User");
-	redis.get("YG-WECHAT-ACCESSTOKEN").then(res => {
-		console.log("accesstoken:"+res);
-	});
+router.post("/getMenuList",function(req,res){
+ 	var user = DB.get("Menu");
 	user.where(req.body,null,function(err,result){
 		if(result.length == 0){
 			res.json({"code":"100000",message:"用户名或密码错误！"});

@@ -12,10 +12,7 @@ router.get('/getInto', function(req, res, next) {
     var echostr = req.query.echostr;
     /*  加密/校验流程如下： */
     //1. 将token、timestamp、nonce三个参数进行字典序排序
-    var array = new Array(token,timestamp,nonce);
-    array.sort();
-    var str = array.toString().replace(/,/g,"");
-  
+    var str = [token, timestamp, nonce].sort().join('');
     //2. 将三个参数字符串拼接成一个字符串进行sha1加密
     var sha1Code = crypto.createHash("sha1");
     var code = sha1Code.update(str,'utf-8').digest("hex");

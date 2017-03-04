@@ -21,8 +21,11 @@ global.moment = require('moment');//日期函数全局访问
 global.moment.locale('zh-cn');
 global.DB=require("./utils/dbutil.js").Instance();
 
-var we = require("./utils/wechat_util.js");
-we.getAccessToken();
+var wechat = require("./utils/wechat_util.js");
+wechat.getAccessToken();
+setInterval(function(){
+	wechat.getAccessToken();
+},7000*1000);
 
 ///定义实体
 app.set('entity',__dirname + '/entity/');
