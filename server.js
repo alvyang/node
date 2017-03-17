@@ -15,6 +15,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(session({secret:'lvyang',cookie:{maxAge: 60000*30 },saveUninitialized:true,resave:true}));
+app.use(express.static(path.join(__dirname+"/web", 'D:/lvyang/repositories/node_web')));
 
 global.logger=require("./utils/logger.js");
 global.moment = require('moment');//日期函数全局访问
@@ -22,10 +23,10 @@ global.moment.locale('zh-cn');
 global.DB=require("./utils/dbutil.js").Instance();
 
 var wechat = require("./utils/wechat_util.js");
-wechat.getAccessToken();
-setInterval(function(){
-	wechat.getAccessToken();
-},7000*1000);
+//wechat.getAccessToken();
+//setInterval(function(){
+//	wechat.getAccessToken();
+//},7000*1000);
 
 ///定义实体
 app.set('entity',__dirname + '/entity/');
