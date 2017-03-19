@@ -1,13 +1,23 @@
 var express = require("express");
 var crypto = require('crypto');
 var wechat = require('../utils/wechat_util.js');
+var logger = require('../utils/logger');
 var router = express.Router();
+var moment = require('moment');
 //获取openId
 router.post("/getOpenId",function(req, res, next){
-	res.json({"status":"success","openid":"data.openid"});
-//	wechat.getOpenId(req.body.code).then(function(data){
-//		res.json({status:"success","openid":data.openid});
-//	});
+	wechat.getOpenId(req.body.code).then(function(data){
+		var d = JSON.parse(data);
+		var user = DB.get("WechatMember");
+		var createTime = moment().format("YYYY-MM-DD HH:mm:ss");
+		var memberData = {
+			id:d.openid,
+			integral:"0",
+			create_time:createTime,
+		};
+		user.insert(memberData);
+		res.json({code:"000000","openid":d.openid});
+	});
 });
 //获取网页授权后的地址
 router.get("/getAuthUrl",function(req, res, next){

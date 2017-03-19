@@ -5,7 +5,7 @@ var app = {
     port: '3306',
     user: 'root',
     password: 'admin',
-    database: 'node',
+    database: 'jfinalshop',
     logger_path: "./log/error.log",
     logger_level: 'debug' //debug | error
 };

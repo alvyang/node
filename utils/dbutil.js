@@ -97,7 +97,7 @@ Table.prototype.get = function(ID, callback) {
     var me=this;
     if (ID != null && ID != "") {
         this.getConnection(function(connection) {
-            var query = connection.query("select * from " + me.tablename + " where id=?", ID, function(err, result) {
+            var query = connection.query("select  "+me.fields.join(",")+"  from " + me.tablename + " where id=?", ID, function(err, result) {
                 if (err || result.length<1) {
                     callback(err,result);
                 }else{
@@ -300,7 +300,7 @@ Table.prototype.queryAll = function(callback) {
     }
     var me=this;
     this.getConnection(function(connection) {
-        var query = connection.query("select * from " + me.tablename, function(err, result) {
+        var query = connection.query("select "+me.fields.join(",")+" from " + me.tablename, function(err, result) {
             if (err) {
                 callback(err,result);
             }else{
@@ -471,7 +471,7 @@ DBUtil.prototype.get=function(tablename){
 
 exports.Instance = function() {
   	if (db == null) {
-    	db = new DBUtil();
+    		db = new DBUtil();
   	}
   	return db;
 };

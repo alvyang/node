@@ -31,12 +31,10 @@ exports.getOpenId = function(code){
 	//获取临时accesstoken
 	var getAccesstoken = `https://api.weixin.qq.com/sns/oauth2/access_token?appid=${appId}&secret=${appsecret}&code=${code}&grant_type=authorization_code`;
 	var options = {
-    	method: 'GET',
-    	url: getAccesstoken
+    		method: 'GET',
+    		url: getAccesstoken
   	};
-  	return requestUrl(options).then(function(data){  
-        return Promise.resolve(data);  
-    });
+  	return requestUrl(options);
 }
 exports.getAccessToken = function(){
   	var url = `${accessTokenUrl}?appid=${appId}&secret=${appsecret}&grant_type=client_credential`;
