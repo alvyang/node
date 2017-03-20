@@ -59,12 +59,6 @@ fs.readdirSync(routes).forEach(function(fileName) {
 
 //Session拦截控制
 app.all("*",function(req,res,next){
-	//以下代码，解决跨域问题
-	res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
-    res.header("X-Powered-By",' 3.2.1');
-    res.header("Content-Type", "application/json;charset=utf-8");
     next();
 });
 ///404

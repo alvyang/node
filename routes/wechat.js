@@ -9,13 +9,19 @@ router.post("/getOpenId",function(req, res, next){
 	wechat.getOpenId(req.body.code).then(function(data){
 		var d = JSON.parse(data);
 		var user = DB.get("WechatMember");
+		var cart = DB.get("Cart");
 		var createTime = moment().format("YYYY-MM-DD HH:mm:ss");
 		var memberData = {
 			id:d.openid,
 			integral:"0",
 			create_time:createTime,
 		};
+		var cart = {
+			member_id:d.openid,
+			creation_date:createTime,
+		};
 		user.insert(memberData);
+		cart.insert(cart);
 		res.json({code:"000000","openid":d.openid});
 	});
 });
