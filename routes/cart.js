@@ -3,7 +3,23 @@ var router = express.Router();
 var redis = require("../utils/redis_util.js");
 var uuid=require("node-uuid");
 var moment = require('moment');
-
+router.post("/getCartItem",function(req,res){
+	var cart = DB.get("Cart");
+	var product = DB.get("Product");
+	var fields = product.fields;
+	var sql = `select ${fields},c.quantity from (select b.quantity,b.product_id from 
+			(select cart.id from cart where cart.open_id ='${req.body.open_id}') a left join cart_item b 
+		on a.id = b.cart_id) c 
+			left join product d on c.product_id = d.id`;
+	cart.executeSql(sql,null,function(err,result){
+ 		if(err){
+ 			logger.debug(err);
+ 			res.json({code:"100000"});
+ 		}else{
+ 			res.json({code:"000000",data:result});
+ 		}
+ 	});
+});
 router.post("/addCart",function(req,res){
 	var cart = DB.get("Cart");
 	cart.getConnection(function(connection){//获得数据库连接
@@ -15,7 +31,7 @@ router.post("/addCart",function(req,res){
 			var openid = req.body.openid;
 		    var createTime = moment().format("YYYY-MM-DD HH:mm:ss");
 			//查询当前用户的购物车id
-			connection.query(`select id from cart where member_id = ${openid}`,req.body.cart,function (error, results) {
+			connection.query(`select id from cart where open_id = '${openid}'`,req.body.cart,function (error, results) {
 			    if (error) {//错误回滚
 			    	res.json({code:"100000"});
 			    	logger.debug(error);
@@ -30,7 +46,7 @@ router.post("/addCart",function(req,res){
 				    	item.creation_date = createTime;
 				    	//判断该商品是否已经在购物车
 				    	var sql_temp = `select * from cart_item where product_id = ${item.product_id} and cart_id = ${cartId}`;
-				    	connection.query(sql_temp,function(error, results){
+				    var query=connection.query(sql_temp,function(error, results){
 				    		if(error){
 				    			logger.debug(error);
 				    			res.json({code:"100000"});
@@ -41,12 +57,13 @@ router.post("/addCart",function(req,res){
 				    		if(results.length == 0){//没有查询到，说明没有添加到购物车
 						    	cartItem.push(item);
 				    		}
+				    		resolve(cartItem);
 				    	});
+				    	logger.debug(query.sql);
 				    });
-				    resolve(cartItem);
 			    }).then(cartItem => {//执行插入购物车商品
 			    	cartItem.forEach(function(value){
-			    		connection.query("insert into cart_item set ?",value,function(error, results){
+			    		var query = connection.query("insert into cart_item set ?",value,function(error, results){
 					    	if (error) {//出现错误，回滚
 					    		res.json({code:"100000"});
 					    		logger.debug(error);
@@ -55,6 +72,7 @@ router.post("/addCart",function(req,res){
 						        });
 						    }
 					    });
+					    logger.debug(query.sql);
 			    	});
 			    }).then(data=>{//执行完成后，提交事务
 				    connection.commit(function(err){

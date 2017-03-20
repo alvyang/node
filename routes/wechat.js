@@ -9,20 +9,78 @@ router.post("/getOpenId",function(req, res, next){
 	wechat.getOpenId(req.body.code).then(function(data){
 		var d = JSON.parse(data);
 		var user = DB.get("WechatMember");
-		var cart = DB.get("Cart");
 		var createTime = moment().format("YYYY-MM-DD HH:mm:ss");
 		var memberData = {
 			id:d.openid,
 			integral:"0",
 			create_time:createTime,
 		};
-		var cart = {
-			member_id:d.openid,
+		var cartData = {
+			open_id:d.openid,
 			creation_date:createTime,
 		};
-		user.insert(memberData);
-		cart.insert(cart);
-		res.json({code:"000000","openid":d.openid});
+		user.getConnection(function(connection){//根据openid，判断用户是否已经关注过
+			connection.beginTransaction(function(err){
+				if (err) { 
+					logger.debug(err);
+					throw err; 
+				}
+				new Promise(function(resolve, reject){
+					var query = connection.query(`select * from wechat_member where id = '${d.openid}'`, function(err, result) {
+		                if (err) {
+		                		logger.debug(err);
+				    			res.json({code:"100000"});
+				    			return connection.rollback(function(){
+						        	throw err;
+					      	});
+		                }else{
+		                    resolve(result);
+		                }
+		            });
+		            logger.debug(query.sql);
+				}).then(data => {
+					if(data.length == 0){//判断是否首次关注,没有关注则,插入会员信息,购物车信息
+						new Promise(function(resolve, reject){
+							var query = connection.query('insert into wechat_member set ?', memberData, function(err, result) {
+				                if (err) {
+				                	 	logger.debug(err);
+						    			res.json({code:"100000"});
+						    			return connection.rollback(function(){
+								        	throw err;
+							      	});
+				                }
+				                 resolve();
+				             });
+				             logger.debug(query.sql);
+						}).then(data => {
+							var query = connection.query('insert into cart set ?', cartData, function(err, result) {
+				                if (err) {
+			                			logger.debug(err);
+						    			res.json({code:"100000"});
+						    			return connection.rollback(function(){
+								        	throw err;
+							      	});
+				                }
+				             });
+				             logger.debug(query.sql);
+						}).then(data=>{
+							connection.commit(function(err){
+						        if (err) {//出现错误，回滚
+							        	res.json({code:"100000"});
+							        	logger.debug(error);
+						          	return connection.rollback(function() {
+						            		throw err;
+						          	});
+						        }
+						        res.json({code:"000000","openid":d.openid});
+						    });
+						});
+					}else{
+						res.json({code:"000000","openid":d.openid});
+					}
+				});
+			})
+		});
 	});
 });
 //获取网页授权后的地址
