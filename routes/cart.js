@@ -29,6 +29,7 @@ router.post("/addCart",function(req,res){
 				throw err; 
 			}
 			var openid = req.body.openid;
+			var cartItem = req.body.cartItem;
 		    var createTime = moment().format("YYYY-MM-DD HH:mm:ss");
 			//查询当前用户的购物车id
 			connection.query(`select id from cart where open_id = '${openid}'`,req.body.cart,function (error, results) {
@@ -40,40 +41,40 @@ router.post("/addCart",function(req,res){
 			      	});
 			    }
 			    new Promise(function(resolve, reject){
-				    var cartItem = [],cartId = results[0].id;//得到购物车id
-				    req.body.cartItem.forEach(function(item){
-				    	item.cart_id = cartId;
-				    	item.creation_date = createTime;
+				    var cartId = results[0].id;//得到购物车id
 				    	//判断该商品是否已经在购物车
-				    	var sql_temp = `select * from cart_item where product_id = ${item.product_id} and cart_id = ${cartId}`;
+				    	var sql_temp = `select * from cart_item where product_id = ${cartItem.product_id} and cart_id = ${cartId}`;
 				    var query=connection.query(sql_temp,function(error, results){
 				    		if(error){
 				    			logger.debug(error);
 				    			res.json({code:"100000"});
 				    			return connection.rollback(function(){
 						        	throw error;
-						      	});
+					      	});
 				    		}
 				    		if(results.length == 0){//没有查询到，说明没有添加到购物车
-						    	cartItem.push(item);
+				    			cartItem.cart_id = cartId;
+						    	resolve(cartItem);
+				    		}else{
+			    				resolve(null);
 				    		}
-				    		resolve(cartItem);
+				    		
 				    	});
 				    	logger.debug(query.sql);
-				    });
-			    }).then(cartItem => {//执行插入购物车商品
-			    	cartItem.forEach(function(value){
-			    		var query = connection.query("insert into cart_item set ?",value,function(error, results){
-					    	if (error) {//出现错误，回滚
-					    		res.json({code:"100000"});
-					    		logger.debug(error);
+			    }).then(data => {//执行插入购物车商品
+			    		if(data){
+			    			data.creation_date = createTime;
+		    				var query = connection.query("insert into cart_item set ?",data,function(error, results){
+					    		if (error) {//出现错误，回滚
+					    			res.json({code:"100000"});
+					    			logger.debug(error);
 						        return connection.rollback(function(){
 						        	throw error;
 						        });
 						    }
 					    });
 					    logger.debug(query.sql);
-			    	});
+			    		}
 			    }).then(data=>{//执行完成后，提交事务
 				    connection.commit(function(err){
 				        if (err) {//出现错误，回滚
