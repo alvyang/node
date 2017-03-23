@@ -8,6 +8,5 @@ module.exports = {
 			'phone',//电话
 			'is_default',//是否默认
 			'open_id',//
-			'creation_date',//创建时间
-			'delete_flag']//是否删除
+			'creation_date']//创建时间
 };
