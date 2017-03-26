@@ -2,6 +2,7 @@ module.exports = {
 	key:'Product',
 	name:'product',
 	fields:['id',
+			'sn',//商品编码
 			'allocated_stock',//已分配库存
 			'cost',//成本价
 			'full_name',//全称

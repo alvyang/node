@@ -64,7 +64,26 @@ Table.prototype.getConnection = function(callback) {
         callback(connection);
     });
 };
-
+//saveIncrement
+Table.prototype.insertIncrement = function(values, callback) {
+    if(!callback){
+        callback=function(){};
+    }
+    var me=this;
+    if (this.clearTable(values)) {
+        this.getConnection(function(connection) {
+            var query = connection.query("insert into " + me.tablename + " set ?", values, function(err, result) {
+                if (err) {
+                    callback(err,null);
+                }else{
+                    callback(null,values["id"]);//TODO　返回生成ＩＤ
+                }
+                connection.release(); //release
+            });
+            logger.debug(query.sql);
+        })
+    }
+};
 //save
 Table.prototype.insert = function(values, callback) {
     if(!callback){
