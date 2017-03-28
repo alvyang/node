@@ -3,6 +3,20 @@ var router = express.Router();
 var redis = require("../utils/redis_util.js");
 var uuid=require("node-uuid");
 var moment = require('moment');
+
+//删除购物车对应商品
+router.post('/deleteCartItem',function(req,res){
+	var cartItem = DB.get("CartItem");
+	var id = req.body.id;
+	cartItem.remove(id,function(err,result){
+		if(err){
+			logger.debug(error);
+	        res.json({"code":"100000",message:"删除购物车信息失败"});
+		}else{
+			res.json({"code":"000000",message:"删除购物车信息成功"});
+		}
+	});
+});
 //更新购物车商品数量
 router.post('/updateQuantity',function(req,res){
 	var cartItem = DB.get("CartItem");
@@ -10,10 +24,10 @@ router.post('/updateQuantity',function(req,res){
 	console.log(itemData);
 	cartItem.update(itemData, function(error, result) {
         if (error) {
-	    		logger.debug(error);
+    		logger.debug(error);
 	        res.json({"code":"100000",message:"修改订单商品数量出错"});
 	    }else{
-	    		res.json({"code":"000000",message:"修改订单商品数量成功"});
+    		res.json({"code":"000000",message:"修改订单商品数量成功"});
 	    }
     });
 });

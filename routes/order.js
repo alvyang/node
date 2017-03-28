@@ -3,24 +3,44 @@ var router = express.Router();
 var logger = require('../utils/logger');
 var moment = require('moment');
 
+router.post("/getOrderList",function(req,res){
+	//1:全部 2:待付款3:待发货4:待收货5:待评价
+	var type = req.body.type;
+});
+
 //获取订单统计数量
 router.post("/getOrderNum",function(req,res){
 	var order = DB.get("Order");
 	var openId = req.body.open_id;
 	order.getConnection(function(connection){
-		/* 
-		 * 1:查询待付款 条数  2：查询未发货订单条数   3：已发货订单条数
-		 */
-		var sql = "select count(*) from `order` where payment_status = 0 and open_id = '"+openId+"' ;"+
-				  "select count(*) from `order` where payment_status = 2 and shipping_status = 0 and open_id = '"+openId+"' ;"+
-				  "select count(*) from `order` where payment_status = 2 and shipping_status = 2 and open_id = '"+openId+"' ;";
+		var sql = "select * from `order` where order_status in (0,1) and open_id = "+openId;
 		var query =  connection.query(sql,function(error, results){
 			if(error){
 				logger.debug(error);
  				res.json({code:"100000"});
 			}else{
-				console.log(results);
-	 			res.json({code:"000000",data:results});
+				var l = results.length;
+				/* 
+				 * pendPay:查询待付款 条数  
+				 * pendDelivery：查询未发货订单条数   
+				 * pendReceive：已发货订单条数
+				 */
+				var pendPay = 0 ,pendDelivery=0 ,pendReceive =0;
+				for(var i = 0 ; i < l ; i++){
+					if(results[i].payment_status == 0){
+						pendPay++;
+					}else if(results[i].payment_status == 2 && results[i].shipping_status == 0){
+						pendDelivery++;
+					}else if(results[i].payment_status == 2 && results[i].shipping_status == 2){
+						pendReceive++;
+					}
+				}
+				var data = {
+					pendPay:pendPay,
+					pendDelivery:pendDelivery,
+					pendReceive:pendReceive,
+				};
+	 			res.json({code:"000000",data:data});
 	 		}
 		});
 	});
