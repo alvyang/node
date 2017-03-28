@@ -4,8 +4,30 @@ var logger = require('../utils/logger');
 var moment = require('moment');
 
 router.post("/getOrderList",function(req,res){
+	var order = DB.get("Order");
 	//1:全部 2:待付款3:待发货4:待收货5:待评价
 	var type = req.body.type;
+	var openId = req.body.open_id;
+	var sql = "select *,s.sn as shipping_sn from `order` o,shipping s where o.order_status in (0,1) and o.open_id = '"+openId+"'";
+	if(type == 1){//全部
+		sql = "select * from `order` where open_id = '"+openId+"'";
+	}else if(type == 2){//待付款
+		sql += " and o.payment_status = 0";
+	}else if(type == 3){//待发货
+		sql += " and o.payment_status = 2 and o.shipping_status = 0";
+	}else if(type == 4){//已发货
+		sql = "select *,s.sn as shipping_sn from `order` o,shipping s where o.id = s.order_id and o.order_status in (0,1) and o.open_id = '"+openId+"' and o.payment_status = 2 and o.shipping_status = 2";
+	}
+ 	order.getConnection(function(connection){
+		var query =  connection.query(sql,function(error, results){
+			if(error){
+				logger.debug(error);
+ 				res.json({code:"100000"});
+			}else{
+				res.json({code:"000000",data:results});
+			}
+		});
+	});
 });
 
 //获取订单统计数量
@@ -13,7 +35,7 @@ router.post("/getOrderNum",function(req,res){
 	var order = DB.get("Order");
 	var openId = req.body.open_id;
 	order.getConnection(function(connection){
-		var sql = "select * from `order` where order_status in (0,1) and open_id = "+openId;
+		var sql = "select * from `order` where order_status in (0,1) and open_id = '"+openId+"'";
 		var query =  connection.query(sql,function(error, results){
 			if(error){
 				logger.debug(error);
