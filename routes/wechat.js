@@ -74,6 +74,7 @@ router.post("/getOpenId",function(req, res, next){
 						        }
 						        res.json({code:"000000","openid":d.openid});
 						    });
+						    connection.release();
 						});
 					}else{
 						res.json({code:"000000","openid":d.openid});

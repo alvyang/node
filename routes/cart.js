@@ -21,7 +21,6 @@ router.post('/deleteCartItem',function(req,res){
 router.post('/updateQuantity',function(req,res){
 	var cartItem = DB.get("CartItem");
 	var itemData = req.body;
-	console.log(itemData);
 	cartItem.update(itemData, function(error, result) {
         if (error) {
     		logger.debug(error);
@@ -92,6 +91,7 @@ router.post("/addCart",function(req,res){
 				    });
 				    logger.debug(query.sql);
 		    		}
+		    		connection.release(); 
 		    });
 	    });
 	});

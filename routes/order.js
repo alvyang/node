@@ -14,44 +14,43 @@ function getOrdersShipping(openId,page,type){
 	var end = page.currentPage*page.pageSize;//结束位置
 	var sql = "select o.*,s.tracking_no,s.delivery_corp,s.delivery_corp_url from `order` o left join shipping s "+
 			  "on o.id = s.order_id where o.open_id = '"+openId+"'";
-	var sqlCount = "select count(*) from `order` where open_id = '"+openId+"'";
+	var sqlCount = "select count(*) as num from `order` where open_id = '"+openId+"'";
 	if(type == 1){//全部
 	}else if(type == 2){//待付款
-		sql += " and payment_status = 0 and order_status in (1,2)";
+		sql += " and payment_status = 0 and order_status in (1,2)"+" order by o.creation_date desc";
 		sqlCount += " and payment_status = 0 and order_status in (1,2)";
 	}else if(type == 3){//待发货
-		sql += " and payment_status = 2 and shipping_status = 0 and order_status in (1,2)";
+		sql += " and payment_status = 2 and shipping_status = 0 and order_status in (1,2)"+" order by o.creation_date desc";
 		sqlCount +=  " and payment_status = 2 and shipping_status = 0 and order_status in (1,2)";
 	}else if(type == 4){//已发货
-		sql += " and payment_status = 2 and shipping_status = 2 and order_status in (1,2)";
+		sql += " and payment_status = 2 and shipping_status = 2 and order_status in (1,2)"+" order by o.creation_date desc";
 		sqlCount += " and payment_status = 2 and shipping_status = 2 and order_status in (1,2)";
 	}
-	sql += " limit "+start+","+end //加分页
+	sql += " limit "+start+","+end//加分页
 	var order = DB.get("Order");
-	return new Promse(function(resolve, reject){
+	return new Promise(function(resolve, reject){
 		order.getConnection(function(connection){
 			var queryCount = connection.query(sqlCount,function(error, count){//查询总数
 				if (error) {//出现错误，回滚
-		    		logger.debug(error);
+		    			logger.debug(error);
 			    }else{
 					var query = connection.query(sql,function(error, results){
-			    		if (error) {//出现错误，回滚
-				    		reject(error);
-				    		logger.debug(error);
+				    		if (error) {//出现错误，回滚
+					    		reject(error);
+					    		logger.debug(error);
 					    }else{
-					    	console.log(count);
-					    	var data = {
-					    		total:count[0],
-					    		list:results,
-					    	}
-					    	resolve(data);
+						    	var data = {
+						    		total:count[0].num,
+						    		list:results,
+						    	}
+						    	resolve(data);
 					    }
 					    connection.release(); //release
 					});
 					logger.debug(query.sql);
 			    }
 			});
-			logger.debug(sqlCount.sql);
+			logger.debug(queryCount.sql);
 		});
     }); 
 }
@@ -71,33 +70,38 @@ router.post("/getOrderList",function(req,res){
 		for(var i = 0 ; i < l ; i++){//查询订单项
 			orderIds.push(orders.list[i].id);
 		}
-		var sql = "select "+orderItem.fields.join(",")+" from order_item where order_id in ("+orderIds.join(",")+")";
-	   	orderItem.getConnection(function(connection){	
-			var query = connection.query(sql,function(error, results){
-				if(error){
-					logger.debug(error);
-	   				res.json({code:"100000"});
-				}else{
-					var rl = results.length;
-					for(var j = 0 ; j < rl ; j++){
-						for(var i = 0 ; i < l ; i++){//查询订单项
-							if(!list[i].orderItem){
-								list[i].orderItem = [];
-							}
-							if(results[j].order_id == list[i].id){
-								list[i].orderItem.push(results[j]);
-								break;
+		if(orderIds.length > 0){
+			var sql = "select "+orderItem.fields.join(',')+" from order_item where order_id in ("+orderIds.join(',')+")";
+			orderItem.getConnection(function(connection){
+				var query = connection.query(sql,function(error, results){
+					if(error){
+						logger.debug(error);
+		   				res.json({code:"100000"});
+					}else{
+						var rl = results.length;
+						for(var j = 0 ; j < rl ; j++){
+							for(var i = 0 ; i < l ; i++){//查询订单项
+								if(!list[i].orderItem){
+									list[i].orderItem = [];
+								}
+								if(results[j].order_id == list[i].id){
+									list[i].orderItem.push(results[j]);
+									break;
+								}
 							}
 						}
+						res.json({code:"000000",data:orders});
+						logger.debug(query.sql);
 					}
-					res.json({code:"000000",data:orders});
-				}
+					connection.release(); 
+				});
 			});
-		});
-	}).cache(err=>{
+		}else{
+			res.json({code:"110000",data:null});
+		}
+	}).catch(err=>{
 		logger.debug(err);
 	});
-
 });
 
 //获取订单统计数量
@@ -134,6 +138,7 @@ router.post("/getOrderNum",function(req,res){
 				};
 	 			res.json({code:"000000",data:data});
 	 		}
+			connection.release(); 
 		});
 	});
 });
@@ -242,6 +247,7 @@ function saveOrder(orderData,orderItem){
 							        }
 							    });
 							}
+							connection.release(); 
 						});
 					}
 				});
