@@ -2,32 +2,102 @@ var express = require("express");
 var router = express.Router();
 var logger = require('../utils/logger');
 var moment = require('moment');
+/* 
+ * 查询全部订单
+ * @params openId 微信openid
+ * 		   pages  分页参数currentPage:当前第几页,pageSize:每页几条
+ * 		   type	  订单状态 1:全部 2:待付款3:待发货4:待收货5:待评价  详细说明，请看entity/orders.js
+ * @return order left join shipping 的 list , totle:总数
+ */
+function getOrdersShipping(openId,page,type){
+	var start = (page.currentPage-1)*page.pageSize;//开始位置
+	var end = page.currentPage*page.pageSize;//结束位置
+	var sql = "select o.*,s.tracking_no,s.delivery_corp,s.delivery_corp_url from `order` o left join shipping s "+
+			  "on o.id = s.order_id where o.open_id = '"+openId+"'";
+	var sqlCount = "select count(*) from `order` where open_id = '"+openId+"'";
+	if(type == 1){//全部
+	}else if(type == 2){//待付款
+		sql += " and payment_status = 0 and order_status in (1,2)";
+		sqlCount += " and payment_status = 0 and order_status in (1,2)";
+	}else if(type == 3){//待发货
+		sql += " and payment_status = 2 and shipping_status = 0 and order_status in (1,2)";
+		sqlCount +=  " and payment_status = 2 and shipping_status = 0 and order_status in (1,2)";
+	}else if(type == 4){//已发货
+		sql += " and payment_status = 2 and shipping_status = 2 and order_status in (1,2)";
+		sqlCount += " and payment_status = 2 and shipping_status = 2 and order_status in (1,2)";
+	}
+	sql += " limit "+start+","+end //加分页
+	var order = DB.get("Order");
+	return new Promse(function(resolve, reject){
+		order.getConnection(function(connection){
+			var queryCount = connection.query(sqlCount,function(error, count){//查询总数
+				if (error) {//出现错误，回滚
+		    		logger.debug(error);
+			    }else{
+					var query = connection.query(sql,function(error, results){
+			    		if (error) {//出现错误，回滚
+				    		reject(error);
+				    		logger.debug(error);
+					    }else{
+					    	console.log(count);
+					    	var data = {
+					    		total:count[0],
+					    		list:results,
+					    	}
+					    	resolve(data);
+					    }
+					    connection.release(); //release
+					});
+					logger.debug(query.sql);
+			    }
+			});
+			logger.debug(sqlCount.sql);
+		});
+    }); 
+}
 
 router.post("/getOrderList",function(req,res){
-	var order = DB.get("Order");
+	var orderItem = DB.get("OrderItem");
+	var openId = req.body.open_id;
 	//1:全部 2:待付款3:待发货4:待收货5:待评价
 	var type = req.body.type;
-	var openId = req.body.open_id;
-	var sql = "select *,s.sn as shipping_sn from `order` o,shipping s where o.order_status in (0,1) and o.open_id = '"+openId+"'";
-	if(type == 1){//全部
-		sql = "select * from `order` where open_id = '"+openId+"'";
-	}else if(type == 2){//待付款
-		sql += " and o.payment_status = 0";
-	}else if(type == 3){//待发货
-		sql += " and o.payment_status = 2 and o.shipping_status = 0";
-	}else if(type == 4){//已发货
-		sql = "select *,s.sn as shipping_sn from `order` o,shipping s where o.id = s.order_id and o.order_status in (0,1) and o.open_id = '"+openId+"' and o.payment_status = 2 and o.shipping_status = 2";
+	var page = {
+		currentPage:req.body.currentPage,
+		pageSize:req.body.pageSize,
 	}
- 	order.getConnection(function(connection){
-		var query =  connection.query(sql,function(error, results){
-			if(error){
-				logger.debug(error);
- 				res.json({code:"100000"});
-			}else{
-				res.json({code:"000000",data:results});
-			}
+	getOrdersShipping(openId,page,type).then(orders => {
+		var list = orders.list, l = orders.list.length;
+		var orderIds = [];
+		for(var i = 0 ; i < l ; i++){//查询订单项
+			orderIds.push(orders.list[i].id);
+		}
+		var sql = "select "+orderItem.fields.join(",")+" from order_item where order_id in ("+orderIds.join(",")+")";
+	   	orderItem.getConnection(function(connection){	
+			var query = connection.query(sql,function(error, results){
+				if(error){
+					logger.debug(error);
+	   				res.json({code:"100000"});
+				}else{
+					var rl = results.length;
+					for(var j = 0 ; j < rl ; j++){
+						for(var i = 0 ; i < l ; i++){//查询订单项
+							if(!list[i].orderItem){
+								list[i].orderItem = [];
+							}
+							if(results[j].order_id == list[i].id){
+								list[i].orderItem.push(results[j]);
+								break;
+							}
+						}
+					}
+					res.json({code:"000000",data:orders});
+				}
+			});
 		});
+	}).cache(err=>{
+		logger.debug(err);
 	});
+
 });
 
 //获取订单统计数量
