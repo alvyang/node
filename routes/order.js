@@ -2,6 +2,16 @@ var express = require("express");
 var router = express.Router();
 var logger = require('../utils/logger');
 var moment = require('moment');
+router.post("/cancelOrder",function(req,res){
+	var order = DB.get("Order");
+	user.update(req.body,function(err,result){
+		if(err){
+			res.json({"code":"100000",message:"取消订单失败！"});
+		}else{
+			res.json({"code":"000000",message:"取消订单成功！"});
+		}
+	});
+});
 /* 
  * 查询全部订单
  * @params openId 微信openid
