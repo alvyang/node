@@ -13,20 +13,26 @@ var requestUrl = function(opts){
     opts = opts || {};  
     return new Promise(function(resolve, reject){  
         request(opts,function(error, response, body){  
-            if (error) {  
+            if (error) {
                 return reject(error);  
             }  
             resolve(body);  
         })  
     })  
 }; 
-//获取网页授权的地址
+/* 
+ * @params url  http地址
+ * @return authUrl 网页授权的http地址
+ */
 exports.getAuthUrl = function(url){
 	var reqUrl = encodeURIComponent(url);
 	var authUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appId}&redirect_uri=${reqUrl}&response_type=code&scope=snsapi_base&state=state#wechat_redirec`
 	return authUrl;
 }
-//获取openId  access_token等
+/*
+ * @params code  微信授权，微信提供的code
+ * @return openId、access_token等
+ */
 exports.getOpenId = function(code){
 	//获取临时accesstoken
 	var getAccesstoken = `https://api.weixin.qq.com/sns/oauth2/access_token?appid=${appId}&secret=${appsecret}&code=${code}&grant_type=authorization_code`;
@@ -36,6 +42,7 @@ exports.getOpenId = function(code){
   	};
   	return requestUrl(options);
 }
+//获取accesstoken
 exports.getAccessToken = function(){
   	var url = `${accessTokenUrl}?appid=${appId}&secret=${appsecret}&grant_type=client_credential`;
   	var options = {
@@ -52,7 +59,7 @@ exports.getAccessToken = function(){
     });  
 }
 //获取微信基础信息
-exports.getWechat = function(code){
+exports.getWechat = function(){
 	return {
 		appId:addId,
 		appsecret:appsecret,
