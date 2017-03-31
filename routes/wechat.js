@@ -25,10 +25,6 @@ router.post("/getOpenId",function(req, res, next){
 		return new Promise(function(resolve, reject){
 			var query = user.executeSql(`select * from wechat_member where id = '${d.openid}'`, null ,function(err, result) {
                 if (err) {
-                		logger.debug(err);
-		    			return connection.rollback(function(){
-				        	throw err;
-			      	});
 			      	reject(err)
                 }else{
                     resolve(result);
