@@ -13,6 +13,10 @@ router.post("/getOpenId",function(req, res, next){
 	var d;
 	wechat.getOpenId(req.body.code).then(function(data){
 		d = JSON.parse(data);
+		if(!d.openid){
+			res.json({code:"100000","message":"网页授权失败"});
+			return ;
+		}
 		memberData = {
 			id:d.openid,
 			integral:"0",

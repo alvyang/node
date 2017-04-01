@@ -2,6 +2,8 @@ var express = require("express");
 var router = express.Router();
 var logger = require('../utils/logger');
 var moment = require('moment');
+//工具类引入
+var wechatPay = require('../utils/wechat_pay.js');
 router.post("/cancelOrder",function(req,res){
 	var order = DB.get("Order");
 	user.update(req.body,function(err,result){
@@ -252,6 +254,7 @@ function saveOrder(orderData,orderItem){
 							          	return connection.rollback(function() {
 							            		throw err;
 							          	});
+							          	reject(err);
 							        }else{
 							        		resolve();
 							        }
@@ -272,17 +275,23 @@ router.post("/addOrders",function(req,res){
 	var orderData = req.body.order;
 	var price = req.body.price;
     getNumPrice(orderItem).then(numPrice => {//计算订单总额
-    		console.log(price,numPrice);
-    		if(price != numPrice){//判断提交金额与后台计算金额是否一致
-    			res.json({code:"100000",message:"提交金额与实际金额不附"});
-    			return ;
-    		}else{
-    			saveOrder(orderData,orderItem);//生成订单
-    		}
-    }).then(data=>{//进了这里,说明前面的代码正常执行了,个性购物车状态
+		console.log(price,numPrice);
+		if(price != numPrice){//判断提交金额与后台计算金额是否一致
+			res.json({code:"100000",message:"提交金额与实际金额不附"});
+			return ;
+		}else{
+			return saveOrder(orderData,orderItem);//生成订单
+		}
+    }).then(data=>{
+    	//在这里调用微信的统一下单接口
+    	//return wechatPay.unifiedorder(orderData);
+    }).then(res=>{
+		//这里处理，微信统一下单接口，返回的数据
+    	//res.json({"code":"100000",message:"更新购物车商品出错"});
+    	//res.json({"code":"000000",message:""});
+	}).then(data=>{//进了这里,说明前面的代码正常执行了,更新购物车状态
     		var openId = orderData.open_id;
     		//这里要注意,删除的是购物车下,逻辑删除,已经结算的商品
-    		
     		orders.getConnection(function(connection) {
 		    var updateSql = `update cart_item set delete_flag = 1  where product_id in 
 		    					( select b.product_id from
@@ -290,10 +299,7 @@ router.post("/addOrders",function(req,res){
 							)`
        		var query = connection.query(updateSql, function(error, result) {
 	            if (error) {
-	            		console.log(error);
-			        res.json({"code":"100000",message:"更新购物车商品出错"});
-			    }else{
-			    		res.json({"code":"000000",message:""});
+            		console.log(error);
 			    }
 	            connection.release(); //release
 	        });
@@ -301,7 +307,7 @@ router.post("/addOrders",function(req,res){
 	    })
     		
     }).catch(function(error){
-    		console.log(error);
+    	console.log(error);
     });
 });
 module.exports = router;

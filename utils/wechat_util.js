@@ -5,6 +5,7 @@ var redis = require("../utils/redis_util.js");
 const appId = "wx314326fcd29e3eef";
 const appsecret = "a8fc933c50ac16d3a824ffd78ccb9f67";
 const token = "jinwe";
+const mch_id = "123123"//商户号
 //微信提供获取accessToken地址
 const accessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token";
 
@@ -14,9 +15,10 @@ var requestUrl = function(opts){
     return new Promise(function(resolve, reject){  
         request(opts,function(error, response, body){  
             if (error) {
-                return reject(error);  
-            }  
-            resolve(body);  
+                reject(error);  
+            }else{
+	            resolve(body);  
+            }
         })  
     })  
 }; 
@@ -61,8 +63,9 @@ exports.getAccessToken = function(){
 //获取微信基础信息
 exports.getWechat = function(){
 	return {
-		appId:addId,
+		appId:appId,
 		appsecret:appsecret,
 		token:token,
+		mch_id:mch_id,
 	}
 }
