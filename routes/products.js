@@ -17,7 +17,6 @@ router.post("/getProductByCategoryId",function(req,res){
 });
 //查询所有商品列表
 router.post("/getProductsList",function(req,res){
- 	
  	//var sql = "select * from product left join product_image on product.id = product_image.product_id";
  	product.queryAll(function(err,result){
  		if(err){

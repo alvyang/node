@@ -29,14 +29,14 @@ function getOrdersShipping(openId,page,type){
 	var sqlCount = "select count(*) as num from `order` where open_id = '"+openId+"'";
 	if(type == 1){//全部
 	}else if(type == 2){//待付款
-		sql += " and payment_status = 0 and order_status in (1,2)"+" order by o.creation_date desc";
-		sqlCount += " and payment_status = 0 and order_status in (1,2)";
+		sql += " and payment_status = 0 and order_status in (0,1,2)"+" order by o.creation_date desc";
+		sqlCount += " and payment_status = 0 and order_status in (0,1,2)";
 	}else if(type == 3){//待发货
-		sql += " and payment_status = 2 and shipping_status = 0 and order_status in (1,2)"+" order by o.creation_date desc";
-		sqlCount +=  " and payment_status = 2 and shipping_status = 0 and order_status in (1,2)";
+		sql += " and payment_status = 2 and shipping_status = 0 and order_status in (0,1,2)"+" order by o.creation_date desc";
+		sqlCount +=  " and payment_status = 2 and shipping_status = 0 and order_status in (0,1,2)";
 	}else if(type == 4){//已发货
-		sql += " and payment_status = 2 and shipping_status = 2 and order_status in (1,2)"+" order by o.creation_date desc";
-		sqlCount += " and payment_status = 2 and shipping_status = 2 and order_status in (1,2)";
+		sql += " and payment_status = 2 and shipping_status = 2 and order_status in (0,1,2)"+" order by o.creation_date desc";
+		sqlCount += " and payment_status = 2 and shipping_status = 2 and order_status in (0,1,2)";
 	}
 	sql += " limit "+start+","+end//加分页
 	var order = DB.get("Order");
@@ -280,6 +280,7 @@ router.post("/addOrders",function(req,res){
 			res.json({code:"100000",message:"提交金额与实际金额不附"});
 			return ;
 		}else{
+			res.json({code:"000000",message:"生成订单出现错误"});
 			return saveOrder(orderData,orderItem);//生成订单
 		}
     }).then(data=>{
@@ -307,7 +308,8 @@ router.post("/addOrders",function(req,res){
 	    })
     		
     }).catch(function(error){
-    	console.log(error);
+    		res.json({code:"100000",message:"生成订单出现错误"});
+    		console.log(error);
     });
 });
 module.exports = router;

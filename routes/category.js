@@ -5,8 +5,10 @@ var logger = require('../utils/logger');
 
 var category = DB.get("ProductCategory");
 var product = DB.get("Product");
-//删除购物车对应商品
-router.get('/getCategoryList',function(req,res){
+/*
+ * 获取商品分类，以及第一个分类下的商品 
+ */
+router.post('/getCategoryList',function(req,res){
 	var fields = category.fields.join(",");
 	var productFields = product.fields.join(",");
 	new Promise(function(resolve, reject){

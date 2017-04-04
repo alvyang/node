@@ -25,6 +25,9 @@ exports.error=function(err){
 }
 exports.debug=function(obj){
 	if(conf.logger_level==="debug" && obj!=null){
-		console.log("\n["+moment(new Date()).format('YYYY-MM-DD HH:mm:ss')+"][DEBUG] "+obj);
+		errorLogfile.open();
+		//console.log("\n["+moment(new Date()).format('YYYY-MM-DD HH:mm:ss')+"][DEBUG] "+obj);
+		errorLogfile.write('\n[' + moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + '] [ERROR] ' +obj);
+		errorLogfile.close();
 	}
 }

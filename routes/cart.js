@@ -90,6 +90,8 @@ router.post("/addCart",function(req,res){
 					    }
 				    });
 				    logger.debug(query.sql);
+		    		}else{
+		    			res.json({code:"000000",message:"该商品已添加到购物车"});
 		    		}
 		    		connection.release(); 
 		    });
