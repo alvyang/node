@@ -4,6 +4,19 @@ var wechat = require('../utils/wechat_util.js');
 var logger = require('../utils/logger');
 var router = express.Router();
 var moment = require('moment');
+
+router.get("/createMenu",function(req, res, next){
+	wechat.createMenu().then(data => {
+		var d = JSON.parse(data);
+		console.log(d);
+		if(d.errcode == 0){
+			res.json({code:"000000","message":"创建成功"});
+		}else{
+			res.json({code:"000000","message":"创建失败"});
+		}
+	});
+});
+
 //获取openId
 router.post("/getOpenId",function(req, res, next){
 	var user = DB.get("WechatMember");
@@ -47,6 +60,7 @@ router.post("/getOpenId",function(req, res, next){
 		res.json({code:"100000"});
 	});
 });
+
 function saveWechatUser(res,memberData,cartData,openId){
 	var user = DB.get("WechatMember");
 	user.getConnection(function(connection){

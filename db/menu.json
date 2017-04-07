@@ -1,0 +1,9 @@
+{  
+  "button": [  
+    {  
+      "name": "商城",  
+      "type": "view",
+      "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx314326fcd29e3eef&redirect_uri=http%3A%2F%2F139.129.238.114%2Fweb%2Findex.html&response_type=code&scope=snsapi_base&state=state#wechat_redirec"
+    }  
+  ]  
+}  

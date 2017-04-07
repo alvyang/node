@@ -1,6 +1,6 @@
 var request = require("request");
 var redis = require("../utils/redis_util.js");
-
+var fs = require('fs');
 //微信公众号信息
 const appId = "wx314326fcd29e3eef";
 const appsecret = "a8fc933c50ac16d3a824ffd78ccb9f67";
@@ -22,6 +22,23 @@ var requestUrl = function(opts){
         })  
     })  
 }; 
+
+exports.createMenu = function(){
+	var menu = fs.readFileSync('db/menu.json');  
+//  if(menu) {  
+//    	menu = JSON.parse(menu);  
+//  }
+    return redis.get("YG-WECHAT-ACCESSTOKEN").then(accessToken => {
+		var createMenu = `https://api.weixin.qq.com/cgi-bin/menu/create?access_token=${accessToken}`;
+		var options = {
+			method: 'post',
+			body:menu,
+			url: createMenu
+	  	};
+	  	return requestUrl(options);
+    });
+}
+
 /* 
  * @params url  http地址
  * @return authUrl 网页授权的http地址

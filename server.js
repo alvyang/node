@@ -22,10 +22,10 @@ global.moment.locale('zh-cn');
 global.DB=require("./utils/dbutil.js").Instance();
 
 var wechat = require("./utils/wechat_util.js");
-//wechat.getAccessToken();
-//setInterval(function(){
-//	wechat.getAccessToken();
-//},7000*1000);
+wechat.getAccessToken();
+setInterval(function(){
+	wechat.getAccessToken();
+},7000*1000);
 
 ///定义实体
 app.set('entity',__dirname + '/entity/');
