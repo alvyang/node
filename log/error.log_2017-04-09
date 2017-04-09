@@ -1,0 +1,42 @@
+
+[2017-04-09 14:40:11] [ERROR] select id as code,name,parent_id as parend_code from area where delete_flag = 0
+[2017-04-09 14:51:49] [ERROR] select id as code,name,parent_id as parend_code from area where delete_flag = 0
+[2017-04-09 15:12:23] [ERROR] select id as code,name,parent_id as parend_code from area where delete_flag = 0
+[2017-04-09 15:41:14] [ERROR] select id as code,name,parent_id as parend_code from area where delete_flag = 0
+[2017-04-09 15:44:21] [ERROR] select id as code,name,parent_id as parend_code from area where delete_flag = 0
+[2017-04-09 16:10:01] [ERROR] select id,sn,allocated_stock,cost,full_name,image,weight,introduction,is_marketable,is_top,is_list,market_price,name,point,price,stock,unit,brand_id,memo,product_category_id from product
+[2017-04-09 16:10:02] [ERROR] select * from wechat_member where id = 'ouSb_soq9hVEwG6ezTvM8cTxYV6Y'
+[2017-04-09 16:11:25] [ERROR] select id,sn,allocated_stock,cost,full_name,image,weight,introduction,is_marketable,is_top,is_list,market_price,name,point,price,stock,unit,brand_id,memo,product_category_id,c.quantity,c.item_id,d.sn from
+		(select b.quantity,b.product_id,b.id as item_id from cart a ,cart_item b 
+			where a.id = b.cart_id and b.delete_flag = 0 and a.open_id = 'ouSb_soq9hVEwG6ezTvM8cTxYV6Y'
+		) c ,product d where c.product_id = d.id
+[2017-04-09 16:11:28] [ERROR] select id,sn,allocated_stock,cost,full_name,image,weight,introduction,is_marketable,is_top,is_list,market_price,name,point,price,stock,unit,brand_id,memo,product_category_id from product
+[2017-04-09 16:11:28] [ERROR] select * from wechat_member where id = 'ouSb_soq9hVEwG6ezTvM8cTxYV6Y'
+[2017-04-09 16:11:30] [ERROR] select * from cart_item where product_id = 49 and cart_id = 46 and delete_flag = 0
+[2017-04-09 16:11:30] [ERROR] insert into cart_item set `quantity` = '1', `product_id` = '49', `cart_id` = 46, `creation_date` = '2017-04-09 16:11:30'
+[2017-04-09 16:11:31] [ERROR] select id,sn,allocated_stock,cost,full_name,image,weight,introduction,is_marketable,is_top,is_list,market_price,name,point,price,stock,unit,brand_id,memo,product_category_id,c.quantity,c.item_id,d.sn from
+		(select b.quantity,b.product_id,b.id as item_id from cart a ,cart_item b 
+			where a.id = b.cart_id and b.delete_flag = 0 and a.open_id = 'ouSb_soq9hVEwG6ezTvM8cTxYV6Y'
+		) c ,product d where c.product_id = d.id
+[2017-04-09 16:11:37] [ERROR] select id,consignee,area_name,address,phone,is_default,open_id,creation_date from receiver where open_id = 'ouSb_soq9hVEwG6ezTvM8cTxYV6Y' and is_default = 1
+[2017-04-09 16:11:39] [ERROR] select id,consignee,area_name,address,phone,is_default,open_id,creation_date from receiver where open_id = 'ouSb_soq9hVEwG6ezTvM8cTxYV6Y'
+[2017-04-09 16:13:03] [ERROR] select id,consignee,area_name,address,phone,is_default,open_id,creation_date from receiver where open_id = 'ouSb_soq9hVEwG6ezTvM8cTxYV6Y'
+[2017-04-09 16:13:06] [ERROR] select id,sn,allocated_stock,cost,full_name,image,weight,introduction,is_marketable,is_top,is_list,market_price,name,point,price,stock,unit,brand_id,memo,product_category_id from product
+[2017-04-09 16:13:07] [ERROR] select * from wechat_member where id = 'ouSb_soq9hVEwG6ezTvM8cTxYV6Y'
+[2017-04-09 16:13:09] [ERROR] select id,sn,allocated_stock,cost,full_name,image,weight,introduction,is_marketable,is_top,is_list,market_price,name,point,price,stock,unit,brand_id,memo,product_category_id,c.quantity,c.item_id,d.sn from
+		(select b.quantity,b.product_id,b.id as item_id from cart a ,cart_item b 
+			where a.id = b.cart_id and b.delete_flag = 0 and a.open_id = 'ouSb_soq9hVEwG6ezTvM8cTxYV6Y'
+		) c ,product d where c.product_id = d.id
+[2017-04-09 16:13:11] [ERROR] select id,consignee,area_name,address,phone,is_default,open_id,creation_date from receiver where open_id = 'ouSb_soq9hVEwG6ezTvM8cTxYV6Y' and is_default = 1
+[2017-04-09 16:13:14] [ERROR] select id,consignee,area_name,address,phone,is_default,open_id,creation_date from receiver where open_id = 'ouSb_soq9hVEwG6ezTvM8cTxYV6Y'
+[2017-04-09 16:13:15] [ERROR] select id as code,name,parent_id as parend_code from area where delete_flag = 0
+[2017-04-09 16:24:33] [ERROR] select id,consignee,area_name,address,phone,is_default,open_id,creation_date from receiver where open_id = 'ouSb_soq9hVEwG6ezTvM8cTxYV6Y'
+[2017-04-09 16:24:36] [ERROR] select id,sn,allocated_stock,cost,full_name,image,weight,introduction,is_marketable,is_top,is_list,market_price,name,point,price,stock,unit,brand_id,memo,product_category_id from product
+[2017-04-09 16:24:36] [ERROR] select * from wechat_member where id = 'ouSb_soq9hVEwG6ezTvM8cTxYV6Y'
+[2017-04-09 16:24:38] [ERROR] select id,sn,allocated_stock,cost,full_name,image,weight,introduction,is_marketable,is_top,is_list,market_price,name,point,price,stock,unit,brand_id,memo,product_category_id,c.quantity,c.item_id,d.sn from
+		(select b.quantity,b.product_id,b.id as item_id from cart a ,cart_item b 
+			where a.id = b.cart_id and b.delete_flag = 0 and a.open_id = 'ouSb_soq9hVEwG6ezTvM8cTxYV6Y'
+		) c ,product d where c.product_id = d.id
+[2017-04-09 16:24:40] [ERROR] select id,consignee,area_name,address,phone,is_default,open_id,creation_date from receiver where open_id = 'ouSb_soq9hVEwG6ezTvM8cTxYV6Y' and is_default = 1
+[2017-04-09 16:24:42] [ERROR] select id,consignee,area_name,address,phone,is_default,open_id,creation_date from receiver where open_id = 'ouSb_soq9hVEwG6ezTvM8cTxYV6Y'
+[2017-04-09 16:24:43] [ERROR] select id as code,name,parent_id as parend_code from area where delete_flag = 0
