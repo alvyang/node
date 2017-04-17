@@ -20,35 +20,6 @@ var requestUrl = function(opts){
 }; 
 
 /*
- * @params ret : 需要加密的对象
- * @return string : 加密后的字符串，并转换成大写
- */
-function paysignjsapi(ret){
-    var str = raw(ret);
-    var key = wechat.key;
-    str += '&key='+key;
-    var crypto = require('crypto');
-    return crypto.createHash('md5').update(str,'utf8').digest('hex').toUpperCase();
-};
-
-/*
- * @params args : 任意对象
- * @return str : 将args 拼接成get方式的字符串
- */
-function raw(args){
-	var keys = Object.keys(args).sort();
-	var newArgs = {};
-  	keys.forEach(function (key) {
-    	newArgs[key] = args[key];
-  	});
-  	var str = '';
-    for (var k in newArgs) {
-    	str += '&' + k + '=' + newArgs[k];
-    }
-    str = str.substr(1);
-    return str; 
-};
-/*
  * 解析XML
  * @param data:要转换的对象模型 ，xml：要解析的xml数据
  * @return 解析后的对象

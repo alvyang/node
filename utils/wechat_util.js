@@ -8,9 +8,10 @@ const token = "jinwe";
 const mch_id = "123123"//商户号
 //微信提供获取accessToken地址
 const accessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token";
+const jsapiTicketUrl = "https://api.weixin.qq.com/cgi-bin/ticket/getticket";
 
 //Promise化request  
-var requestUrl = function(opts){  
+var requestUrl = function(opts){
     opts = opts || {};  
     return new Promise(function(resolve, reject){  
         request(opts,function(error, response, body){  
@@ -23,6 +24,9 @@ var requestUrl = function(opts){
     })  
 }; 
 
+/* 
+ * 创建自定义菜单
+ */
 exports.createMenu = function(){
 	var menu = fs.readFileSync('db/menu.json');  
 //  if(menu) {  
@@ -63,7 +67,7 @@ exports.getOpenId = function(code){
 }
 //获取accesstoken
 exports.getAccessToken = function(){
-  	var url = `${accessTokenUrl}?appid=${appId}&secret=${appsecret}&grant_type=client_credential`;
+    var url = `${accessTokenUrl}?appid=${appId}&secret=${appsecret}&grant_type=client_credential`;
   	var options = {
     	method: 'GET',
     	url: url
@@ -73,10 +77,25 @@ exports.getAccessToken = function(){
   			resolve(JSON.parse(body));
         })
     }).then(res => {
-    	console.log(res.access_token);
+    	console.log("accesstoken"+res.access_token);
 		redis.set("YG-WECHAT-ACCESSTOKEN",res.access_token);
-    });  
+		//获取微信js 票据
+		var url = `${jsapiTicketUrl}?access_token=${res.access_token}&type=jsapi`;
+	  	var options = {
+	    	method: 'GET',
+	    	url: url
+	  	};
+	  	return new Promise(function(resolve, reject){  
+	        request(options,function(error, response, body){  
+	  			resolve(JSON.parse(body));
+	        })
+	    });
+    }).then(res => {
+    	console.log("ticked"+res.ticket);
+		redis.set("YG-WECHAT-JSAPI-TICKET",res.ticket);
+    }); 
 }
+
 //获取微信基础信息
 exports.getWechat = function(){
 	return {

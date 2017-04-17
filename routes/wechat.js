@@ -4,6 +4,27 @@ var wechat = require('../utils/wechat_util.js');
 var logger = require('../utils/logger');
 var router = express.Router();
 var moment = require('moment');
+var gUtil = require('../utils/global_util.js');
+var redis = require("../utils/redis_util.js");
+
+router.post("/getJsConfig",function(req, res, next){
+	var c = wechat.getWechat();
+	var randomString = gUtil.randomString();
+	var timestamp = parseInt(new Date().getTime()/1000);
+	var url = req.body.url;
+	redis.get("YG-WECHAT-JSAPI-TICKET").then(ticket => {
+		console.log({noncestr:randomString,jsapi_ticket:ticket,timestamp:timestamp,url:url});
+		var signature = gUtil.strEncryption({noncestr:randomString,jsapi_ticket:ticket,timestamp:timestamp,url:url});
+		var config = {
+			appId:c.appId,
+			timestamp:timestamp,
+			nonceStr:randomString,
+			signature:signature,
+		}
+		logger.debug(config);
+		res.json({code:"000000",data:config});
+    });
+});
 
 router.get("/createMenu",function(req, res, next){
 	wechat.createMenu().then(data => {
