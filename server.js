@@ -37,15 +37,15 @@ fs.readdirSync(entity).forEach(function(fileName) {
     }
 });
 //node.js做代理服务器，做测试用
-var request = require('request');
-app.use('/web/', function(req, res) {//静态页面代理服务器
-    var url = 'http://localhost:8020/repositories/node_web/'+req.url;
-    req.pipe(request(url)).pipe(res);
-});
-app.use('/upload/', function(req, res) {//图片代理服务器，指向
-    var url = 'http://localhost:8080/upload/'+req.url;
-    req.pipe(request(url)).pipe(res);
-});
+//var request = require('request');
+//app.use('/web/', function(req, res) {//静态页面代理服务器
+//  var url = 'http://localhost:8020/repositories/node_web/'+req.url;
+//  req.pipe(request(url)).pipe(res);
+//});
+//app.use('/upload/', function(req, res) {//图片代理服务器，指向
+//  var url = 'http://localhost:8080/upload/'+req.url;
+//  req.pipe(request(url)).pipe(res);
+//});
 //控制层_根据routes文件名+方法_约定请求路径
 app.set('routes',__dirname + '/routes/');
 var routes=app.get("routes");

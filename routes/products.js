@@ -15,10 +15,11 @@ router.post("/getProductByCategoryId",function(req,res){
 		}
 	});
 });
-//查询所有商品列表
+//查询所有商品列表（已上架，已列出）
 router.post("/getProductsList",function(req,res){
- 	//var sql = "select * from product left join product_image on product.id = product_image.product_id";
- 	product.queryAll(function(err,result){
+	var productFields = product.fields.join(",");
+ 	var sql = `select ${productFields} from product p where p.delete_flag = 0 and p.is_marketable = 1 and p.is_list = 1`;
+ 	product.executeSql(sql,null,function(err,result){
  		if(err){
  			logger.debug(err);
  			res.json({code:"100000"});

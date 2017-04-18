@@ -23,7 +23,7 @@ router.post('/getCategoryList',function(req,res){
 	}).then(data => {
 		//查询第一个分类下，所有商品信息
 		var id0 = data[0].id;
-		product.executeSql(`select ${productFields} from product where product_category_id = ${id0} and delete_flag = 0`,null,function(err,result){
+		product.executeSql(`select ${productFields} from product where product_category_id = ${id0} and delete_flag = 0 and is_marketable = 1`,null,function(err,result){
 			if(err){
 				logger.debug(err);
 				res.json({code:"100000"});
