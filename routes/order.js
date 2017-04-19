@@ -26,7 +26,7 @@ function getOrdersShipping(openId,page,type){
 	var end = page.currentPage*page.pageSize;//结束位置
 	var sql = "select o.*,s.tracking_no,s.delivery_corp,s.delivery_corp_url from `order` o left join shipping s "+
 			  "on o.id = s.order_id where o.open_id = '"+openId+"' and o.delete_flag = 0";
-	var sqlCount = "select count(*) as num from `order` where open_id = '"+openId+"' and o.delete_flag = 0";
+	var sqlCount = "select count(*) as num from `order` where open_id = '"+openId+"' and delete_flag = 0";
 	if(type == 1){//全部
 	}else if(type == 2){//待付款
 		sql += " and payment_status = 0 and order_status in (0,1,2)"+" order by o.creation_date desc";

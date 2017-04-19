@@ -7,6 +7,9 @@ var moment = require('moment');
 var gUtil = require('../utils/global_util.js');
 var redis = require("../utils/redis_util.js");
 
+/* 
+ * 获取调用微信js-sdk的，参数
+ */
 router.post("/getJsConfig",function(req, res, next){
 	var c = wechat.getWechat();
 	var randomString = gUtil.randomString();
@@ -25,7 +28,9 @@ router.post("/getJsConfig",function(req, res, next){
 		res.json({code:"000000",data:config});
     });
 });
-
+/* 
+ * 创建自定义菜单
+ */
 router.get("/createMenu",function(req, res, next){
 	wechat.createMenu().then(data => {
 		var d = JSON.parse(data);
@@ -37,7 +42,12 @@ router.get("/createMenu",function(req, res, next){
 		}
 	});
 });
-
+router.post("/getUserMesage",function(req, res, next){
+	var openId = req.body.openId;
+	wechat.getUserMessage(openId).then(function(data){
+		res.json({code:"000000",data:data});
+	});
+});
 //获取openId
 router.post("/getOpenId",function(req, res, next){
 	var user = DB.get("WechatMember");
@@ -81,7 +91,9 @@ router.post("/getOpenId",function(req, res, next){
 		res.json({code:"100000"});
 	});
 });
-
+/*
+ * 创建用户
+ */
 function saveWechatUser(res,memberData,cartData,openId){
 	var user = DB.get("WechatMember");
 	user.getConnection(function(connection){

@@ -9,7 +9,8 @@ const mch_id = "123123"//商户号
 //微信提供获取accessToken地址
 const accessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token";
 const jsapiTicketUrl = "https://api.weixin.qq.com/cgi-bin/ticket/getticket";
-
+const userMessage = "https://api.weixin.qq.com/cgi-bin/user/info";
+const userMessageAuth="https://api.weixin.qq.com/sns/userinfo";
 //Promise化request  
 var requestUrl = function(opts){
     opts = opts || {};  
@@ -24,6 +25,20 @@ var requestUrl = function(opts){
     })  
 }; 
 
+/* 
+ * @param  微信用户openId
+ * @return 获取微信用户自定义消息
+ */
+exports.getUserMessage = function(openId){
+	return redis.get("YG-WECHAT-ACCESSTOKEN").then(accessToken => {
+		var url = `${userMessage}?access_token=${accessToken}&openid=${openId}&lang=zh_CN`;
+		var options = {
+			method: 'get',
+			url: url
+	  	};
+	  	return requestUrl(options);
+    });
+}
 /* 
  * 创建自定义菜单
  */
@@ -60,8 +75,8 @@ exports.getOpenId = function(code){
 	//获取临时accesstoken
 	var getAccesstoken = `https://api.weixin.qq.com/sns/oauth2/access_token?appid=${appId}&secret=${appsecret}&code=${code}&grant_type=authorization_code`;
 	var options = {
-    		method: 'GET',
-    		url: getAccesstoken
+		method: 'GET',
+		url: getAccesstoken
   	};
   	return requestUrl(options);
 }
