@@ -177,14 +177,18 @@ function getNumPrice(products){
 	ids = ids.substring(0,ids.length - 1);
 	return new Promise(function(resolve, reject){
 		orders.getConnection(function(connection){
-			var query = connection.query(`select price from product where id in (${ids})`,function(error, results){
+			var query = connection.query(`select price,id from product where id in (${ids})`,function(error, results){
 		    		if (error) {//出现错误，回滚
 			    		reject(error);
 			    		logger.debug(error);
 			    }else{
 			    		var l = products.length;
 					for(var i = 0 ; i < l;i++){//计算总金额
-						numPrice += keepTwoDecimal(products[i].quantity*results[0].price);
+						for(var j = 0 ; j < results.length ; j++){
+							if(products[i].id == results[j].id){
+								numPrice += keepTwoDecimal(products[i].quantity*results[j].price);
+							}
+						}
 					}
 					resolve(numPrice);
 			    }
