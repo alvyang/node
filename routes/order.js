@@ -168,13 +168,8 @@ function keepTwoDecimal(num) {
  * @params  products：订单产品列表
  * @return  numPrice：订单总额
  */
-function getNumPrice(products){
+function getNumPrice(products,ids){
 	var orders = DB.get("Order"),numPrice=0;
-	var ids="";//封闭已选择的商品id字符串
-	products.forEach(function(value){
-		ids += value.id+",";
-	});
-	ids = ids.substring(0,ids.length - 1);
 	return new Promise(function(resolve, reject){
 		orders.getConnection(function(connection){
 			var query = connection.query(`select price,id from product where id in (${ids})`,function(error, results){
@@ -232,19 +227,21 @@ function saveOrder(orderData,orderItem){
 					}else{
 						var ol = orderItem.length,oItems = [];
 						for(var i = 0 ; i < ol ; i++){
-				    			oItems.push({
-				    				sn:orderItem[i].sn,
-				    				creation_date:createTime,
-				    				name:orderItem[i].full_name,
-				    				full_name:orderItem[i].full_name,
-				    				price:orderItem[i].price,
-				    				quantity:orderItem[i].quantity,
-				    				thumbnail:orderItem[i].image,
-				    				order_id:result.insertId,
-				    				product_id:orderItem[i].id,
-				    			});
+				    			oItems.push([
+				    				orderItem[i].sn,
+				    				createTime,
+				    				orderItem[i].full_name,
+				    				orderItem[i].full_name,
+				    				orderItem[i].price,
+				    				orderItem[i].quantity,
+				    				orderItem[i].image,
+				    				result.insertId,
+				    				orderItem[i].id
+				    			]);
 				    		}
-				    		connection.query("insert into order_item set ?",oItems,function(err,result){
+						var f = "(sn,creation_date,name,full_name,price,quantity,thumbnail,order_id,product_id)";
+				    		var insertQuery = connection.query("insert into order_item "+f+" values ?",[oItems],function(err,result){
+							console.log(insertQuery);
 							if(err){
 								logger.debug(err);
 								return connection.rollback(function() {
@@ -278,7 +275,12 @@ router.post("/addOrders",function(req,res){
 	var orderItem = req.body.orderItem;//商品信息
 	var orderData = req.body.order;
 	var price = req.body.price;
-    getNumPrice(orderItem).then(numPrice => {//计算订单总额
+	var ids="";//已选择的商品id字符串
+	orderItem.forEach(function(value){
+		ids += value.id+",";
+	});
+	ids = ids.substring(0,ids.length - 1);
+    getNumPrice(orderItem,ids).then(numPrice => {//计算订单总额
 		console.log(price,numPrice);
 		if(price != numPrice){//判断提交金额与后台计算金额是否一致
 			res.json({code:"100000",message:"提交金额与实际金额不附"});
@@ -301,7 +303,7 @@ router.post("/addOrders",function(req,res){
 		    var updateSql = `update cart_item set delete_flag = 1  where product_id in 
 		    					( select b.product_id from
 								(select ci.product_id from cart c,cart_item ci where c.open_id = '${openId}' and c.id = ci.cart_id) b
-							)`
+							 where b.product_id in (${ids}))`
        		var query = connection.query(updateSql, function(error, result) {
 	            if (error) {
             		console.log(error);
