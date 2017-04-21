@@ -44,9 +44,16 @@ router.get("/createMenu",function(req, res, next){
 });
 router.post("/getUserMesage",function(req, res, next){
 	var openId = req.body.openId;
-	wechat.getUserMessage(openId).then(function(data){
-		res.json({code:"000000",data:data});
-	});
+	var user = DB.get("WechatMember");
+	var query = user.executeSql(`select * from wechat_member where id = '${openId}'`, null ,function(err, result) {
+        if (err) {
+	      	res.json({code:"100000","message":"获取信息失败"});
+        }else{
+            res.json({code:"000000",data:result[0]});
+        }
+    });
+    logger.debug(query);
+	
 });
 //获取openId
 router.post("/getOpenId",function(req, res, next){
@@ -96,49 +103,60 @@ router.post("/getOpenId",function(req, res, next){
  */
 function saveWechatUser(res,memberData,cartData,openId){
 	var user = DB.get("WechatMember");
-	user.getConnection(function(connection){
-		//根据openid，判断用户是否已经关注过
-		connection.beginTransaction(function(err){
-			if (err) {
-				logger.debug(err);
-				return connection.rollback(function() {
-	            		throw err;
-	          	});
-			}
-			var query = connection.query('insert into wechat_member set ?', memberData, function(err, result) {
-                if (err) {
-                	 	logger.debug(err);
-		    			res.json({code:"100000"});
-		    			return connection.rollback(function(){
-				        	throw err;
-			      	});
-                }else{
-                		var queryCart = connection.query('insert into cart set ?', cartData, function(err, result) {
-		                if (err) {
-	                			logger.debug(err);
-				    			res.json({code:"100000"});
-				    			return connection.rollback(function(){
-						        	throw err;
-					      	});
-		                }else{
-			                	connection.commit(function(err){
-						        if (err) {//出现错误，回滚
-							        	res.json({code:"100000"});
-							        	logger.debug(error);
-						          	return connection.rollback(function() {
-						            		throw err;
-						          	});
-						        }
-						        res.json({code:"000000","openid":openId});
-						    });
-		                }
-					    connection.release();
-		             });
-		             logger.debug(queryCart.sql);
-                }
-             });
-             logger.debug(query.sql);
-		})
+	wechat.getUserMessage(openId).then(function(data){
+		var usermessage = JSON.parse(data);
+		memberData.nickname = usermessage.nickname;
+		memberData.subscribe = usermessage.subscribe;
+		memberData.sex = usermessage.sex;
+		memberData.city = usermessage.city;
+		memberData.province = usermessage.province;
+		memberData.country = usermessage.country;
+		memberData.headimgurl = usermessage.headimgurl;
+		memberData.subscribe_time = usermessage.subscribe_time;
+		user.getConnection(function(connection){
+			//根据openid，判断用户是否已经关注过
+			connection.beginTransaction(function(err){
+				if (err) {
+					logger.debug(err);
+					return connection.rollback(function() {
+		            		throw err;
+		          	});
+				}
+				var query = connection.query('insert into wechat_member set ?', memberData, function(err, result) {
+	                if (err) {
+	                	 	logger.debug(err);
+			    			res.json({code:"100000"});
+			    			return connection.rollback(function(){
+					        	throw err;
+				      	});
+	                }else{
+	                		var queryCart = connection.query('insert into cart set ?', cartData, function(err, result) {
+			                if (err) {
+		                			logger.debug(err);
+					    			res.json({code:"100000"});
+					    			return connection.rollback(function(){
+							        	throw err;
+						      	});
+			                }else{
+				                	connection.commit(function(err){
+							        if (err) {//出现错误，回滚
+								        	res.json({code:"100000"});
+								        	logger.debug(error);
+							          	return connection.rollback(function() {
+							            		throw err;
+							          	});
+							        }
+							        res.json({code:"000000","openid":openId});
+							    });
+			                }
+						    connection.release();
+			             });
+			             logger.debug(queryCart.sql);
+	                }
+	             });
+	             logger.debug(query.sql);
+			})
+		});
 	});
 }
 //获取网页授权后的地址
