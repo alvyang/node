@@ -6,8 +6,11 @@ var moment = require('moment');
 var wechatPay = require('../utils/wechat_pay.js');
 router.post("/cancelOrder",function(req,res){
 	var order = DB.get("Order");
-	user.update(req.body,function(err,result){
+	var sql = "update `order` set delete_flag = 1 where id = "+req.body.id;
+	var querySql = order.executeSql(sql,null,function(err,result){
 		if(err){
+			logger.debug("取消订单失败");
+			logger.debug(err);
 			res.json({"code":"100000",message:"取消订单失败！"});
 		}else{
 			res.json({"code":"000000",message:"取消订单成功！"});
@@ -28,6 +31,7 @@ function getOrdersShipping(openId,page,type){
 			  "on o.id = s.order_id where o.open_id = '"+openId+"' and o.delete_flag = 0";
 	var sqlCount = "select count(*) as num from `order` where open_id = '"+openId+"' and delete_flag = 0";
 	if(type == 1){//全部
+		sql += " order by o.creation_date desc";
 	}else if(type == 2){//待付款
 		sql += " and payment_status = 0 and order_status in (0,1,2)"+" order by o.creation_date desc";
 		sqlCount += " and payment_status = 0 and order_status in (0,1,2)";
@@ -44,12 +48,14 @@ function getOrdersShipping(openId,page,type){
 		order.getConnection(function(connection){
 			var queryCount = connection.query(sqlCount,function(error, count){//查询总数
 				if (error) {//出现错误，回滚
+					logger.debug("查询订单总数出错");
 		    			logger.debug(error);
 			    }else{
 					var query = connection.query(sql,function(error, results){
 				    		if (error) {//出现错误，回滚
+				    			logger.debug("查询订单列表出错");
+				    			logger.debug(error);
 					    		reject(error);
-					    		logger.debug(error);
 					    }else{
 						    	var data = {
 						    		total:count[0].num,
@@ -87,6 +93,7 @@ router.post("/getOrderList",function(req,res){
 			orderItem.getConnection(function(connection){
 				var query = connection.query(sql,function(error, results){
 					if(error){
+						logger.debug("查询订单列表项出错");
 						logger.debug(error);
 		   				res.json({code:"100000"});
 					}else{
@@ -124,6 +131,7 @@ router.post("/getOrderNum",function(req,res){
 		var sql = "select * from `order` where order_status in (0,1) and open_id = '"+openId+"' and delete_flag = 0";
 		var query =  connection.query(sql,function(error, results){
 			if(error){
+				logger.debug("获取订单统计数量");
 				logger.debug(error);
  				res.json({code:"100000"});
 			}else{
@@ -174,6 +182,7 @@ function getNumPrice(products,ids){
 		orders.getConnection(function(connection){
 			var query = connection.query(`select price,id from product where id in (${ids})`,function(error, results){
 		    		if (error) {//出现错误，回滚
+		    			logger.debug("计算订单总额");
 			    		reject(error);
 			    		logger.debug(error);
 			    }else{
@@ -219,6 +228,7 @@ function saveOrder(orderData,orderItem){
 		    		var createTime = moment().format("YYYY-MM-DD HH:mm:ss");
 				connection.query("insert into `order` set ?",orderData,function(err,result){
 					if(err){
+						logger.debug("插入订单出错");
 						logger.debug(err);
 						return connection.rollback(function() {
 			            		throw err;
@@ -243,6 +253,7 @@ function saveOrder(orderData,orderItem){
 				    		var insertQuery = connection.query("insert into order_item "+f+" values ?",[oItems],function(err,result){
 							console.log(insertQuery);
 							if(err){
+								logger.debug("插入订单项出错");
 								logger.debug(err);
 								return connection.rollback(function() {
 					            		throw err;
@@ -283,6 +294,7 @@ router.post("/addOrders",function(req,res){
     getNumPrice(orderItem,ids).then(numPrice => {//计算订单总额
 		console.log(price,numPrice);
 		if(price != numPrice){//判断提交金额与后台计算金额是否一致
+			logger.debug("提交金额与实际金额不附");
 			res.json({code:"100000",message:"提交金额与实际金额不附"});
 			return ;
 		}else{
@@ -306,6 +318,7 @@ router.post("/addOrders",function(req,res){
 							 where b.product_id in (${ids}))`
        		var query = connection.query(updateSql, function(error, result) {
 	            if (error) {
+	            	logger.debug("订单完成后，更新购物车项出错");
             		console.log(error);
 			    }
 	            connection.release(); //release

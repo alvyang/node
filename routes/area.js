@@ -7,6 +7,8 @@ router.post('/getArea',function(req,res){
 	
 	area.executeSql("select id as code,name,parent_id as parend_code from area where delete_flag = 0",null,function(err,result){
 		if(err){
+			logger.debug("获取地址失败");
+			logger.debug(err);
 	        res.json({"code":"100000",message:"获取地址失败"});
 		}else{
 			var data = [];

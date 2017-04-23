@@ -12,7 +12,8 @@ router.post("/updateReceiver",function(req,res){
 	var receiverData = req.body.receiver;
     receiver.update(receiverData, function(error, result) {
         if (error) {
-	    		logger.debug(error);
+        	logger.debug("修改收货地址出错");
+    		logger.debug(error);
 	        res.json({"code":"100000",message:"修改收货地址出错"});
 	    }else{
 	    		res.json({"code":"000000",message:""});
@@ -35,6 +36,7 @@ router.post("/addReceiver",function(req,res){
 	receiver.getConnection(function(connection) {
         var query = connection.query("insert into receiver set ?", receiverData, function(error, result) {
             if (error) {//出现错误，回滚
+            	logger.debug("添加收货出错");
 		    		logger.debug(error);
 		        res.json({"code":"100000",message:"添加收货出错"});
 		    }else{
@@ -55,6 +57,7 @@ router.post("/getDefaultReceiver",function(req,res){
 		var fields = receiver.fields;
 		var query = connection.query(`select ${fields} from receiver where open_id = '${openId}' and is_default = 1`,function(error, results){
 	    		if (error) {//出现错误，回滚
+	    			logger.debug("获取地址出错");
 		    		logger.debug(error);
 		        res.json({"code":"100000",message:"获取地址出错"});
 		    }else{
@@ -79,6 +82,7 @@ router.post("/getReceiverList",function(req,res){
 		var fields = receiver.fields;
 		var query = connection.query(`select ${fields} from receiver where open_id = '${openId}'`,function(error, results){
 	    		if (error) {//出现错误，回滚
+	    			logger.debug("查询所有地址出错");
 		    		logger.debug(error);
 		        res.json({"code":"100000",message:"获取地址出错"});
 		    }else{

@@ -10,7 +10,8 @@ router.post('/deleteCartItem',function(req,res){
 	var id = req.body.id;
 	cartItem.remove(id,function(err,result){
 		if(err){
-			logger.debug(error);
+			logger.debug("删除购物车信息失败");
+			logger.debug(err);
 	        res.json({"code":"100000",message:"删除购物车信息失败"});
 		}else{
 			res.json({"code":"000000",message:"删除购物车信息成功"});
@@ -23,6 +24,7 @@ router.post('/updateQuantity',function(req,res){
 	var itemData = req.body;
 	cartItem.update(itemData, function(error, result) {
         if (error) {
+        	logger.debug("修改订单商品数量出错");
     		logger.debug(error);
 	        res.json({"code":"100000",message:"修改订单商品数量出错"});
 	    }else{
@@ -41,6 +43,7 @@ router.post("/getCartItem",function(req,res){
 		) c ,product d where c.product_id = d.id`;
 	cart.executeSql(sql,null,function(err,result){
  		if(err){
+ 			logger.debug("获取购物车信息失败");
  			logger.debug(err);
  			res.json({code:"100000"});
  		}else{
@@ -65,6 +68,7 @@ router.post("/addCart",function(req,res){
 			    	var sql_temp = `select * from cart_item where product_id = ${cartItem.product_id} and cart_id = ${cartId} and delete_flag = 0`;
 			    var query=connection.query(sql_temp,function(error, results){
 			    		if(error){
+			    			logger.debug("判断该商品是否已经在购物车");
 			    			logger.debug(error);
 			    			res.json({code:"100000"});
 			    			reject();
@@ -83,6 +87,7 @@ router.post("/addCart",function(req,res){
 		    			data.creation_date = createTime;
 	    				var query = connection.query("insert into cart_item set ?",data,function(error, results){
 				    		if (error) {//出现错误，回滚
+				    			logger.debug("执行插入购物车商品");
 				    			res.json({code:"100000"});
 				    			logger.debug(error);
 					    }else{

@@ -15,6 +15,8 @@ router.post('/getCategoryList',function(req,res){
 		//查询所有一级分类
 		category.executeSql(`select ${fields} from product_category where parent_id is null`,null,function(err,result){
 			if(err){
+				logger.debug("查询分类列表出错");
+				logger.debug(err);
 				reject(err);
 			}else{
 				resolve(result);
@@ -25,6 +27,7 @@ router.post('/getCategoryList',function(req,res){
 		var id0 = data[0].id;
 		product.executeSql(`select ${productFields} from product where product_category_id = ${id0} and delete_flag = 0 and is_marketable = 1`,null,function(err,result){
 			if(err){
+				logger.debug("查询第一个分类下，所有商品信息");
 				logger.debug(err);
 				res.json({code:"100000"});
 			}else{

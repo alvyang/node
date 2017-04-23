@@ -47,6 +47,7 @@ router.post("/getUserMesage",function(req, res, next){
 	var user = DB.get("WechatMember");
 	var query = user.executeSql(`select * from wechat_member where id = '${openId}'`, null ,function(err, result) {
         if (err) {
+        	logger.debug("获取用户信息失败");
 	      	res.json({code:"100000","message":"获取信息失败"});
         }else{
             res.json({code:"000000",data:result[0]});
@@ -65,6 +66,7 @@ router.post("/getOpenId",function(req, res, next){
 	wechat.getOpenId(req.body.code).then(function(data){
 		d = JSON.parse(data);
 		if(!d.openid){
+			logger.debug("获取openId失败");
 			res.json({code:"100000","message":"网页授权失败"});
 			return ;
 		}
@@ -80,6 +82,7 @@ router.post("/getOpenId",function(req, res, next){
 		return new Promise(function(resolve, reject){
 			var query = user.executeSql(`select * from wechat_member where id = '${d.openid}'`, null ,function(err, result) {
                 if (err) {
+                	logger.debug("获取会员信息失败");
 			      	reject(err)
                 }else{
                     resolve(result);
@@ -124,6 +127,7 @@ function saveWechatUser(res,memberData,cartData,openId){
 				}
 				var query = connection.query('insert into wechat_member set ?', memberData, function(err, result) {
 	                if (err) {
+	                	logger.debug("初始化微信用户(粉丝)失败");
 	                	 	logger.debug(err);
 			    			res.json({code:"100000"});
 			    			return connection.rollback(function(){
@@ -132,6 +136,7 @@ function saveWechatUser(res,memberData,cartData,openId){
 	                }else{
 	                		var queryCart = connection.query('insert into cart set ?', cartData, function(err, result) {
 			                if (err) {
+			                	logger.debug("初始化微信用户(购物车)失败");
 		                			logger.debug(err);
 					    			res.json({code:"100000"});
 					    			return connection.rollback(function(){
