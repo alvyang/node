@@ -1,0 +1,77 @@
+
+[2017-04-24 18:38:08] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[ok]]></return_msg></xml>
+[2017-04-24 18:42:36] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[ok]]></return_msg></xml>
+[2017-04-24 18:42:46] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[ok]]></return_msg></xml>
+[2017-04-24 18:43:07] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[ok]]></return_msg></xml>
+[2017-04-24 18:44:06] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[ok]]></return_msg></xml>
+[2017-04-24 18:44:29] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[ok]]></return_msg></xml>
+[2017-04-24 18:45:12] [ERROR] 
+[2017-04-24 18:45:12] [ERROR] select * from payment where order_id = 22
+[2017-04-24 18:45:12] [ERROR] select price,quantity from order_item where order_id = 22
+[2017-04-24 18:46:03] [ERROR] 
+[2017-04-24 18:46:03] [ERROR] select * from payment where order_id = 22
+[2017-04-24 18:46:03] [ERROR] select price,quantity from order_item where order_id = 22
+[2017-04-24 18:47:10] [ERROR] 
+[2017-04-24 18:47:10] [ERROR] select * from payment where order_id = 22
+[2017-04-24 18:47:10] [ERROR] select price,quantity from order_item where order_id = 22
+[2017-04-24 18:47:24] [ERROR] 
+[2017-04-24 18:47:24] [ERROR] select * from payment where order_id = 22
+[2017-04-24 18:47:24] [ERROR] select price,quantity from order_item where order_id = 22
+[2017-04-24 18:50:18] [ERROR] 
+[2017-04-24 18:50:18] [ERROR] select * from payment where order_id = 22
+[2017-04-24 18:50:18] [ERROR] select price,quantity from order_item where order_id = 22
+[2017-04-24 18:52:49] [ERROR] select * from payment where order_id = 22
+[2017-04-24 18:52:49] [ERROR] select price,quantity from order_item where order_id = 22
+[2017-04-24 18:57:12] [ERROR] 
+[2017-04-24 18:57:12] [ERROR] select * from payment where order_id = 22
+[2017-04-24 18:57:12] [ERROR] select price,quantity from order_item where order_id = 22
+[2017-04-24 18:57:28] [ERROR] 
+[2017-04-24 18:57:28] [ERROR] select * from payment where order_id = 22
+[2017-04-24 18:57:28] [ERROR] select price,quantity from order_item where order_id = 22
+[2017-04-24 18:58:12] [ERROR] 
+[2017-04-24 18:58:12] [ERROR] select * from payment where order_id = 22
+[2017-04-24 18:58:12] [ERROR] select price,quantity from order_item where order_id = 22
+[2017-04-24 19:05:12] [ERROR] select * from payment where order_id = 22
+[2017-04-24 19:05:12] [ERROR] select price,quantity from order_item where order_id = 22
+[2017-04-24 19:05:12] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[订单金额不符]]></return_msg></xml>
+[2017-04-24 19:05:29] [ERROR] select * from payment where order_id = 22
+[2017-04-24 19:05:29] [ERROR] select price,quantity from order_item where order_id = 22
+[2017-04-24 19:05:29] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[订单金额不符]]></return_msg></xml>
+[2017-04-24 19:05:29] [ERROR] <xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[数据正在处理中]]></return_msg></xml>
+[2017-04-24 19:07:42] [ERROR] select * from payment where order_id = 22
+[2017-04-24 19:07:42] [ERROR] select price,quantity from order_item where order_id = 22
+[2017-04-24 19:08:28] [ERROR] select * from payment where order_id = 22
+[2017-04-24 19:08:28] [ERROR] select price,quantity from order_item where order_id = 22
+[2017-04-24 19:08:28] [ERROR] insert into payment set `type` = 0, `order_id` = '22', `amount` = '199', `fee` = 0, `payment_date` = '20140903131540', `status` = 0, `method` = 0, `payment_method` = '微信公众号支付'
+[2017-04-24 19:08:28] [ERROR] 添加收款信息出错22
+[2017-04-24 19:09:23] [ERROR] select * from payment where order_id = 22
+[2017-04-24 19:09:23] [ERROR] select price,quantity from order_item where order_id = 22
+[2017-04-24 19:09:23] [ERROR] insert into payment set `sn` = 1493032163869, `type` = 0, `order_id` = '22', `amount` = '199', `fee` = 0, `payment_date` = '20140903131540', `status` = 0, `method` = 0, `payment_method` = '微信公众号支付'
+[2017-04-24 19:09:53] [ERROR] select * from payment where order_id = 22
+[2017-04-24 19:09:53] [ERROR] select price,quantity from order_item where order_id = 22
+[2017-04-24 19:09:53] [ERROR] insert into payment set `sn` = 1493032193666, `type` = 0, `order_id` = '22', `amount` = '199', `fee` = 0, `payment_date` = '20140903131540', `status` = 0, `method` = 0, `payment_method` = '微信公众号支付'
+[2017-04-24 19:09:53] [ERROR] update `order` set amount_paid = 199,payment_status=2 where id = 22
+[2017-04-24 19:09:53] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[ok]]></return_msg></xml>
+[2017-04-24 19:13:06] [ERROR] select * from payment where order_id = 23
+[2017-04-24 19:13:06] [ERROR] select price,quantity from order_item where order_id = 23
+[2017-04-24 19:13:06] [ERROR] insert into payment set `sn` = 1493032386273, `type` = 0, `order_id` = '23', `amount` = '199', `fee` = 0, `payment_date` = '20140903131540', `status` = 0, `method` = 0, `payment_method` = '微信公众号支付'
+[2017-04-24 19:13:06] [ERROR] update `order` set amount_paid = 199,payment_status=2 where id = 23
+[2017-04-24 19:13:06] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[ok]]></return_msg></xml>
+[2017-04-24 19:13:27] [ERROR] select * from payment where order_id = 23
+[2017-04-24 19:13:27] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[数据已处理]]></return_msg></xml>
+[2017-04-24 19:13:58] [ERROR] select * from payment where order_id = 23
+[2017-04-24 19:13:58] [ERROR] select price,quantity from order_item where order_id = 23
+[2017-04-24 19:13:58] [ERROR] insert into payment set `sn` = 1493032438534, `type` = 0, `order_id` = '23', `amount` = '199', `fee` = 0, `payment_date` = '20140903131540', `status` = 0, `method` = 0, `payment_method` = '微信公众号支付'
+[2017-04-24 19:13:58] [ERROR] update `order` set amount_paid = 199,payment_status=2 where id = 23
+[2017-04-24 19:13:58] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[ok]]></return_msg></xml>
+[2017-04-24 19:15:29] [ERROR] select * from payment where order_id = 23
+[2017-04-24 19:15:29] [ERROR] select price,quantity from order_item where order_id = 23
+[2017-04-24 19:15:29] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[订单金额不符]]></return_msg></xml>
+[2017-04-24 19:21:43] [ERROR] select * from payment where order_id = 23
+[2017-04-24 19:21:43] [ERROR] select price,quantity from order_item where order_id = 23
+[2017-04-24 19:21:43] [ERROR] insert into payment set `sn` = 1493032903849, `type` = 0, `order_id` = '23', `amount` = '199.9', `fee` = 0, `payment_date` = '20140903131540', `status` = 0, `method` = 0, `payment_method` = '微信公众号支付'
+[2017-04-24 19:21:43] [ERROR] update `order` set amount_paid = 199.9,payment_status=2 where id = 23
+[2017-04-24 19:23:55] [ERROR] select * from payment where order_id = 23
+[2017-04-24 19:23:55] [ERROR] select price,quantity from order_item where order_id = 23
+[2017-04-24 19:23:55] [ERROR] insert into payment set `sn` = 1493033035441, `type` = 0, `order_id` = '23', `amount` = '199.9', `fee` = 0, `payment_date` = '20140903131540', `status` = 0, `method` = 0, `payment_method` = '微信公众号支付'
+[2017-04-24 19:23:55] [ERROR] update `order` set amount_paid = 199.9,payment_status=2 where id = 23

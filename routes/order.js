@@ -6,7 +6,7 @@ var moment = require('moment');
 var wechatPay = require('../utils/wechat_pay.js');
 router.post("/cancelOrder",function(req,res){
 	var order = DB.get("Order");
-	var sql = "update `order` set delete_flag = 1 where id = "+req.body.id;
+	var sql = "update `order` set order_status = 3 where id = "+req.body.id;
 	var querySql = order.executeSql(sql,null,function(err,result){
 		if(err){
 			logger.debug("取消订单失败");
