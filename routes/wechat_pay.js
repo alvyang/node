@@ -5,6 +5,7 @@ var router = express.Router();
 var moment = require('moment');
 var wechat = require('../utils/wechat_util.js');
 var wechatPay = require('../utils/wechat_pay.js');
+var globalUtil = require("../utils/global_util.js");
 var order = DB.get("Order");
 var orderItem = DB.get("OrderItem");
 var payment = DB.get("Payment");
@@ -132,6 +133,18 @@ function updateOrderPayment(notify,res){
 		});
 	});
 }
+/* 
+ * 微信返回的参数加密，用于签名验证
+ */
+function singWechatNotify(notify){
+	delete notify.sign;
+	for(var no in notify){
+		if (notify.hasOwnProperty(no) && !notify[no]) { //filter,只输出man的私有属性
+            delete notify[no];
+        };
+	}
+	return globalUtil.wechatPayNotify(notify);
+}
 /*
  * 支付完成，微信异步回调
  */
@@ -140,7 +153,13 @@ router.post("/payNotifyUrl",function(req, res){
 	var notifyReturn = "";
 	if(notify.result_code == "SUCCESS" && notify.return_code == "SUCCESS" ){
 		//1.判断签名
-		
+		var sing = notify.sign;
+		if(sing != singWechatNotify(notify)){
+			logger.debug("签名验证出错");
+			notifyReturn = `<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[签名验证错误]]></return_msg></xml>`;
+			returnNofify(res,notifyReturn);
+			return ;
+		}
 		//2.redis 数据锁，处理并发
 		redis.get("ORDER-ID-"+notify.out_trade_no).then(out_trade_no => {//同一个订单，并发控制
 			if(out_trade_no){
@@ -184,27 +203,4 @@ function returnNofify(res,notifyReturn){
 	res.writeHead(200, {'Content-Type': 'application/xml'});
 	res.end(notifyReturn);
 }
-/*
- * 统一下单异步回调
- */
-router.post('/pay', function(req, res) {
-	var order = {
-		sn:"1111111111",
-		fee:"23423423"
-	}
-	wechatPay.unifiedorder(order);
-	res.json({code:"100000","message":test});
-});
-
-/*微信安全接入*/
-router.get('/test', function(req, res) {
-	var order = {
-		sn:"1111111111",
-		fee:"23423423"
-	}
-	wechatPay.unifiedorder(order);
-	res.json({code:"100000","message":test});
-});
-
-
 module.exports = router;

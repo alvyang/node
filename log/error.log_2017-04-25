@@ -1,0 +1,14 @@
+
+[2017-04-25 14:19:37] [ERROR] 签名验证出错
+[2017-04-25 14:19:37] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[签名验证错误]]></return_msg></xml>
+[2017-04-25 14:20:01] [ERROR] 签名验证出错
+[2017-04-25 14:20:01] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[签名验证错误]]></return_msg></xml>
+[2017-04-25 14:35:10] [ERROR] 签名验证出错
+[2017-04-25 14:35:10] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[签名验证错误]]></return_msg></xml>
+[2017-04-25 14:36:10] [ERROR] 签名验证出错
+[2017-04-25 14:36:10] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[签名验证错误]]></return_msg></xml>
+[2017-04-25 14:36:29] [ERROR] select * from payment where order_id = 23
+[2017-04-25 14:36:29] [ERROR] select price,quantity from order_item where order_id = 23
+[2017-04-25 14:36:29] [ERROR] insert into payment set `sn` = 1493102189015, `type` = 0, `order_id` = '23', `amount` = '199.9', `fee` = 0, `payment_date` = '20140903131540', `status` = 0, `method` = 0, `payment_method` = '微信公众号支付'
+[2017-04-25 14:36:29] [ERROR] update `order` set amount_paid = 199.9,payment_status=2 where id = 23
+[2017-04-25 14:36:29] [ERROR] <xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[ok]]></return_msg></xml>

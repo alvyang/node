@@ -44,7 +44,7 @@ exports.unifiedorder = function(order){
 		out_trade_no:order.sn,//商户订单号
 		total_fee:order.fee*100,//标价金额 单位为分
 		spbill_create_ip:"3",//终端IP
-		notify_url:"4",//通知地址
+		notify_url:"http://www.jin-wei.shop/inter/wechat_pay/payNotifyUrl",//通知地址
 		trade_type:"JSAPI",//交易类型
 		openid:"sdf",
 	}

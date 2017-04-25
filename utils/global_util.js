@@ -1,5 +1,5 @@
 var wechat = require('../utils/wechat_util.js');
-
+var crypto = require('crypto');
 /*
  * 生成随机字符串
  */
@@ -19,8 +19,17 @@ exports.randomString = function(len) {
  */
 exports.strEncryption = function(ret){
     var str = raw(ret);
-    var crypto = require('crypto');
     return crypto.createHash('sha1').update(str,'utf8').digest('hex');
+};
+
+/*
+ * @params ret : 需要加密的对象
+ * @return string : 加密后的字符串，并转换成大写
+ */
+exports.wechatPayNotify = function(ret) {
+	var str = raw(ret);
+	str += "&key=12312323";
+  	return crypto.createHash('md5').update(str).digest('hex').toUpperCase();
 };
 
 /*

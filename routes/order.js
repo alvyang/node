@@ -298,13 +298,13 @@ router.post("/addOrders",function(req,res){
 			res.json({code:"100000",message:"提交金额与实际金额不附"});
 			return ;
 		}else{
-			res.json({code:"000000",message:"生成订单出现错误"});
 			return saveOrder(orderData,orderItem);//生成订单
 		}
     }).then(data=>{
     	//在这里调用微信的统一下单接口
-    	//return wechatPay.unifiedorder(orderData);
-    }).then(res=>{
+    	return wechatPay.unifiedorder(orderData);
+    }).then(data => {
+    	
 		//这里处理，微信统一下单接口，返回的数据
     	//res.json({"code":"100000",message:"更新购物车商品出错"});
     	//res.json({"code":"000000",message:""});
