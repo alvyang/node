@@ -4,7 +4,7 @@ var app = {
     host: 'localhost',
     port: '3306',
     user: 'root',
-    password: 'lv705916',
+    password: 'admin',
     database: 'jfinalshop',
     logger_path: "./log/error.log",
     logger_level: 'debug' //debug | error
